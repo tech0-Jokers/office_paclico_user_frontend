@@ -1,17 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Image from "next/image";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { ShoppingCart } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ProductCard } from "@/components/product-card";
 
 // お菓子のデータ型
 type Candy = {
@@ -25,6 +17,7 @@ type Candy = {
 export default function CandyShop() {
   const [candies, setCandies] = useState<Candy[]>([]);
   const [cart, setCart] = useState<{ id: number; quantity: number }[]>([]);
+  const [favorites, setFavorites] = useState<number[]>([]);
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
@@ -64,54 +57,29 @@ export default function CandyShop() {
     }, 0);
   };
 
+  const toggleFavorite = (id: number) => {
+    setFavorites((prevFavorites) =>
+      prevFavorites.includes(id)
+        ? prevFavorites.filter((favId) => favId !== id)
+        : [...prevFavorites, id]
+    );
+  };
+
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-3xl font-bold mb-6">お菓子ショップ</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {candies.map((candy) => (
-          <Card key={candy.id} className="flex flex-col">
-            <CardHeader>
-              <Image
-                src={candy.image}
-                alt={candy.name}
-                width={200}
-                height={200}
-                className="mx-auto"
-              />
-              <CardTitle>{candy.name}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground mb-2">
-                {candy.description}
-              </p>
-              <p className="font-bold">¥{candy.price}</p>
-            </CardContent>
-            <CardFooter className="mt-auto">
-              <div className="flex items-center gap-2">
-                <Input
-                  type="number"
-                  min="1"
-                  defaultValue="1"
-                  className="w-20"
-                  id={`quantity-${candy.id}`}
-                />
-                <Button
-                  onClick={() => {
-                    const quantity = parseInt(
-                      (
-                        document.getElementById(
-                          `quantity-${candy.id}`
-                        ) as HTMLInputElement
-                      ).value
-                    );
-                    addToCart(candy.id, quantity);
-                  }}
-                >
-                  カートに追加
-                </Button>
-              </div>
-            </CardFooter>
-          </Card>
+          <ProductCard
+            key={candy.id}
+            name={candy.name}
+            description={candy.description}
+            price={candy.price}
+            imageSrc={candy.image}
+            isFavorite={favorites.includes(candy.id)}
+            onToggleFavorite={() => toggleFavorite(candy.id)}
+            onAddToCart={(quantity) => addToCart(candy.id, quantity)}
+          />
         ))}
       </div>
       <div className="mt-8 p-4 bg-muted rounded-lg">
