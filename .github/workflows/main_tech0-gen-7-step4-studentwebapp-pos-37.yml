@@ -50,15 +50,15 @@ jobs:
         run: unzip release.zip
 
       # Azure Login アクションの追加
-      - name: "Azure Login"
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }} # GitHub SecretsにAzureの認証情報を追加
+#      - name: "Azure Login"
+#       uses: azure/login@v1
+#      with:
+#       creds: ${{ secrets.AZURE_CREDENTIALS }} # GitHub SecretsにAzureの認証情報を追加
 
-      # Azure Web App へのデプロイ部分
-      - name: "Deploy to Azure Web App"
-        uses: azure/webapps-deploy@v3
-        with:
-          app-name: "YOUR_AZURE_WEBAPP_NAME" # Azure Web Appの名前
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }} # GitHub Secretsに追加する必要があります
-          package: .
+# Azure Web App へのデプロイ部分
+#  - name: "Deploy to Azure Web App"
+#   uses: azure/webapps-deploy@v3
+#   with:
+#     app-name: "YOUR_AZURE_WEBAPP_NAME" # Azure Web Appの名前
+#     publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }} # GitHub Secretsに追加する必要があります
+#     package: .
