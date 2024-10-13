@@ -23,9 +23,16 @@ export default function CandyShop() {
 
   useEffect(() => {
     const fetchCandies = async () => {
-      const response = await fetch(`${apiUrl}/candies`);
-      const data = await response.json();
-      setCandies(data);
+      try {
+        const response = await fetch(`${apiUrl}/candies`);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch candies: ${response.status}`);
+        }
+        const data = await response.json();
+        setCandies(data);
+      } catch (error) {
+        console.error("Error fetching candies:", error);
+      }
     };
 
     fetchCandies();
