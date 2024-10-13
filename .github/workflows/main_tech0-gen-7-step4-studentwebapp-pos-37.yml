@@ -1,69 +1,84 @@
+# Azure Web Apps Deploy アクションのドキュメントリンク
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
+# 他のAzure向けGitHub Actionsはこちら:
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 
+# このワークフローの名前
 name: Build, Test, and Deploy Node.js app to Azure Web App
 
+# トリガー条件: `main`ブランチへのプッシュ、もしくは手動トリガーで実行
 on:
   push:
     branches:
-      - main
-  workflow_dispatch:
+      - main # `main`ブランチへのプッシュ時に自動実行
+  workflow_dispatch: # 手動での実行が可能
 
+# 環境変数の設定: GitHub Secretsに保存された値を使用
 env:
-  NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
-  NEXT_PUBLIC_WEBAPP_TEST: ${{ secrets.NEXT_PUBLIC_WEBAPP_TEST }}
+  NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }} # APIのURL
+  NEXT_PUBLIC_WEBAPP_TEST: ${{ secrets.NEXT_PUBLIC_WEBAPP_TEST }} # Webアプリのテスト用の値
 
+# ジョブの定義: まずビルドを実行
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest # Ubuntuの最新バージョン上で実行
 
     steps:
-      - uses: actions/checkout@v4
+      # リポジトリのコードをチェックアウト
+      - uses: actions/checkout@v4 # GitHub Actionsの公式アクションを使用してリポジトリの内容を取得
 
+      # Node.jsのセットアップ
       - name: Set up Node.js version
         uses: actions/setup-node@v3
         with:
-          node-version: "20.x"
+          node-version: "20.x" # Node.jsのバージョンを指定（バージョン20.x）
 
+      # npmで依存パッケージをインストールし、ビルドとテストを実行
       - name: npm install, build, and test
         run: |
-          npm install
-          npm run build --if-present
-          npm run test --if-present
+          npm install  # 依存パッケージのインストール
+          npm run build --if-present  # ビルドコマンドを実行（存在する場合）
+          npm run test --if-present  # テストを実行（存在する場合）
 
+      # デプロイ用のアーティファクトをコピー
       - name: Copy artifact for deployment job
         run: |
-          mkdir deploy
-          if [ -d ".next/standalone/" ]; then cp -r ./.next/standalone/. ./deploy; fi
-          if [ -d "./public" ]; then cp -r ./public ./deploy; fi
-          if [ -d ".next/static/" ]; then cp -r ./.next/static/. ./deploy/.next/static; fi
+          mkdir deploy  # デプロイ用のディレクトリを作成
+          if [ -d ".next/standalone/" ]; then cp -r ./.next/standalone/. ./deploy; fi  # Next.jsのスタンドアロンファイルをコピー
+          if [ -d "./public" ]; then cp -r ./public ./deploy; fi  # 公開フォルダをコピー
+          if [ -d ".next/static/" ]; then cp -r ./.next/static/. ./deploy/.next/static; fi  # 静的ファイルをコピー
 
+      # デプロイ用にアーティファクトをZIPに圧縮
       - name: Zip artifact for deployment
-        run: zip release.zip ./deploy -r
+        run: zip release.zip ./deploy -r # deployディレクトリをZIPに圧縮
 
+      # デプロイジョブ用にアーティファクトをアップロード
       - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4 # アーティファクトのアップロード
         with:
-          name: node-app
-          path: release.zip
+          name: node-app # アーティファクト名を指定
+          path: release.zip # アップロードするファイルのパス
 
+  # デプロイのジョブ
   deploy:
-    runs-on: ubuntu-latest
-    needs: build
+    runs-on: ubuntu-latest # Ubuntuの最新バージョン上で実行
+    needs: build # このジョブはビルドジョブが成功した後に実行
 
     steps:
+      # ビルドジョブからアーティファクトをダウンロード
       - name: Download artifact from build job
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4 # アーティファクトのダウンロード
         with:
-          name: node-app
+          name: node-app # ダウンロードするアーティファクト名
 
+      # ダウンロードしたアーティファクトを解凍
       - name: Unzip artifact for deployment
-        run: unzip release.zip
+        run: unzip release.zip # 圧縮ファイルを解凍
 
       # Azure Web App へのデプロイ部分
       - name: "Deploy to Azure Web App"
-        uses: azure/webapps-deploy@v3 # 正しい形式でアクションを指定
+        uses: azure/webapps-deploy@v3 # Azure Web Appにデプロイするアクションを使用
         with:
-          app-name: "tech0-gen-7-step4-studentwebapp-pos-37" # Azure Web Appの名前
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }} # GitHub Secretsに公開プロファイルを追加
-          package: ./deploy
+          app-name: "tech0-gen-7-step4-studentwebapp-pos-37" # デプロイ先のAzure Web Appの名前
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }} # GitHub Secretsに保存された公開プロファイル
+          package: ./deploy # デプロイするパッケージのパス
