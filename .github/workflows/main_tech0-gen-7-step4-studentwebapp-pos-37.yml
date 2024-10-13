@@ -9,6 +9,10 @@ on:
       - main
   workflow_dispatch:
 
+env:
+  NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
+  NEXT_PUBLIC_WEBAPP_TEST: ${{ secrets.NEXT_PUBLIC_WEBAPP_TEST }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
