@@ -23,6 +23,7 @@ export default function CandyShop() {
   const [favorites, setFavorites] = useState<number[]>([]);
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  console.log(apiUrl);
 
   useEffect(() => {
     const fetchCandies = async () => {
