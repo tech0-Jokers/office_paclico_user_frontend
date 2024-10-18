@@ -23,12 +23,13 @@ export default function CandyShop() {
   const [favorites, setFavorites] = useState<number[]>([]);
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-  console.log(apiUrl);
+  console.log("1", apiUrl);
 
   useEffect(() => {
     const fetchCandies = async () => {
       try {
         const response = await fetch(`${apiUrl}/candies`);
+        console.log("2", apiUrl);
         if (!response.ok) {
           throw new Error(`Failed to fetch candies: ${response.status}`);
         }
