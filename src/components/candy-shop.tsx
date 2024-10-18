@@ -13,8 +13,7 @@ type Candy = {
   image: string;
   description: string;
 };
-const envtest = process.env.NEXT_PUBLIC_WEBAPP_TEST;
-console.log(envtest);
+
 console.log(process.env.NEXT_PUBLIC_API_URL);
 
 export default function CandyShop() {
@@ -30,6 +29,8 @@ export default function CandyShop() {
       try {
         const response = await fetch(`${apiUrl}/candies`);
         console.log("2", apiUrl);
+        console.log(`Fetching candies from: ${apiUrl}/candies`);
+
         if (!response.ok) {
           throw new Error(`Failed to fetch candies: ${response.status}`);
         }
