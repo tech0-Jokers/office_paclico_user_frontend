@@ -16,7 +16,6 @@ on:
 # 環境変数の設定: GitHub Secretsに保存された値を使用
 env:
   NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }} # APIのURL
-  NEXT_PUBLIC_WEBAPP_TEST: ${{ secrets.NEXT_PUBLIC_WEBAPP_TEST }} # Webアプリのテスト用の値
 
 # ジョブの定義: まずビルドを実行
 jobs:
