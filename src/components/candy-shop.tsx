@@ -13,9 +13,6 @@ type Candy = {
   image: string;
   description: string;
 };
-const envtest = process.env.NEXT_PUBLIC_WEBAPP_TEST;
-console.log(envtest);
-console.log(process.env.NEXT_PUBLIC_API_URL);
 
 export default function CandyShop() {
   const [candies, setCandies] = useState<Candy[]>([]);
