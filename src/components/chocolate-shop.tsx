@@ -36,42 +36,35 @@ export default function ChocolateShop() {
   // コンポーネントの初回表示時にお菓子データをAPIから取得します
   useEffect(() => {
     const fetchChocolates = async () => {
-      // まず、apiUrlが正しく設定されているか確認します
       if (!apiUrl) {
         console.error(
           "API URLが設定されていません。環境変数 NEXT_PUBLIC_API_URL を確認してください。"
         );
         setError("API URLが設定されていません。");
-        return; // URLが無ければ処理を中止
+        return;
       }
 
-      // 実際にリクエストを送るURLを組み立てます
       const requestUrl = `${apiUrl}/chocolates`;
 
       try {
-        // APIにリクエストを送信して、お菓子データを取得
         const response = await fetch(requestUrl);
-        // レスポンスが正常でなければエラーをスローします
         if (!response.ok) {
           throw new Error(
             `お菓子のデータの取得に失敗しました: ${response.status}`
           );
         }
 
-        // JSONデータを解析して、stateに保存
         const data = await response.json();
-        setChocolate(data); // データを更新
-        setError(null); // エラーが無ければエラーメッセージをリセット
+        setChocolate(data);
+        setError(null);
       } catch (error) {
-        // エラーメッセージを表示
         console.error("お菓子のデータを取得中にエラーが発生しました:", error);
         setError("データの取得に失敗しました。後でもう一度試してください。");
       }
     };
 
-    // 関数を実行して、お菓子データを取得
     fetchChocolates();
-  }, []); // 初回レンダリング時のみ実行
+  }, []); // apiUrlを依存配列から除去
 
   // カートに商品を追加する関数
   const addToCart = (id: number, quantity: number) => {
