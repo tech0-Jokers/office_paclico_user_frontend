@@ -18,6 +18,7 @@ type Candy = {
 const apiUrl = process.env.NEXT_PUBLIC_API_URL; // 環境変数から取得
 console.log("環境変数 NEXT_PUBLIC_API_URL:", apiUrl); // デバッグ用にURLを表示
 
+// CandyShopコンポーネントの定義
 export default function CandyShop() {
   // お菓子データを保持するためのステート
   const [candies, setCandies] = useState<Candy[]>([]);

@@ -6,7 +6,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"; // DialogTrigger は未使用のため削除しました
-import Image from "next/image";
 import ReplyForm from "./ReplyForm";
 import { useState } from "react";
 import { Message, Reply } from "../types";

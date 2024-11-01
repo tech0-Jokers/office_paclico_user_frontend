@@ -5,6 +5,7 @@ import { Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import Image from "next/image"; // Imageコンポーネントをインポート
 
 interface ProductCardProps {
   name: string;
@@ -33,10 +34,12 @@ export function ProductCard({
   return (
     <Card className="w-full">
       <CardHeader>
-        <img
-          src={imageSrc}
-          alt={name}
-          className="w-full h-48 object-cover rounded-t-lg"
+        <Image
+          src={imageSrc} // 画像のURLを指定
+          alt={name} // 画像の説明を指定
+          width={500} // 幅を指定（適切なサイズに変更）
+          height={200} // 高さを指定（適切なサイズに変更）
+          className="w-full h-48 object-cover rounded-t-lg" // スタイルを適用
         />
         <CardTitle>{name}</CardTitle>
       </CardHeader>
