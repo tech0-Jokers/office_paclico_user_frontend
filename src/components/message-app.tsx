@@ -19,7 +19,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import Image from "next/image";
+
+type Reply = {
+  id: number;
+  from: string;
+  content: string;
+};
 
 type Message = {
   id: number;
@@ -28,6 +35,8 @@ type Message = {
   message: string;
   treat: string;
   likes: number;
+  replies: Reply[];
+  imageUrl: string;
 };
 
 const predefinedMessages = [
@@ -36,6 +45,12 @@ const predefinedMessages = [
   "助かりました！",
   "お疲れ様です！",
   "素晴らしい仕事です！",
+];
+
+const predefinedImages = [
+  "/placeholder.svg?height=200&width=200&text=Image1",
+  "/placeholder.svg?height=200&width=200&text=Image2",
+  "/placeholder.svg?height=200&width=200&text=Image3",
 ];
 
 export default function Component() {
@@ -47,6 +62,8 @@ export default function Component() {
       message: "ありがとうございます！",
       treat: "チョコレート",
       likes: 0,
+      replies: [],
+      imageUrl: predefinedImages[0],
     },
     {
       id: 2,
@@ -55,14 +72,18 @@ export default function Component() {
       message: "頑張ってください！",
       treat: "クッキー",
       likes: 0,
+      replies: [],
+      imageUrl: predefinedImages[1],
     },
   ]);
   const [selectedMessage, setSelectedMessage] = useState<Message | null>(null);
 
-  const addMessage = (newMessage: Omit<Message, "id" | "likes">) => {
+  const addMessage = (
+    newMessage: Omit<Message, "id" | "likes" | "replies">
+  ) => {
     setMessages([
       ...messages,
-      { ...newMessage, id: messages.length + 1, likes: 0 },
+      { ...newMessage, id: messages.length + 1, likes: 0, replies: [] },
     ]);
   };
 
@@ -72,6 +93,33 @@ export default function Component() {
       messages.map((msg) =>
         msg.id === id ? { ...msg, likes: msg.likes + 1 } : msg
       )
+    );
+  };
+
+  const addReply = (messageId: number, reply: Omit<Reply, "id">) => {
+    setMessages(
+      messages.map((msg) =>
+        msg.id === messageId
+          ? {
+              ...msg,
+              replies: [
+                ...msg.replies,
+                { ...reply, id: msg.replies.length + 1 },
+              ],
+            }
+          : msg
+      )
+    );
+    setSelectedMessage((prev) =>
+      prev && prev.id === messageId
+        ? {
+            ...prev,
+            replies: [
+              ...prev.replies,
+              { ...reply, id: prev.replies.length + 1 },
+            ],
+          }
+        : prev
     );
   };
 
@@ -88,10 +136,18 @@ export default function Component() {
             onClick={() => setSelectedMessage(message)}
           >
             <CardContent className="p-4">
+              <div className="aspect-video relative mb-2">
+                <Image
+                  src={message.imageUrl}
+                  alt="Message image"
+                  fill
+                  className="object-cover rounded-md"
+                />
+              </div>
               <p className="font-semibold text-purple-700">To: {message.to}</p>
               <p className="text-purple-600">From: {message.from}</p>
               <p className="text-purple-800 mt-2">{message.message}</p>
-              <div className="mt-2">
+              <div className="mt-2 flex items-center justify-between">
                 <Button
                   size="sm"
                   variant="outline"
@@ -103,6 +159,9 @@ export default function Component() {
                     {message.likes}
                   </span>
                 </Button>
+                <span className="text-sm text-purple-600">
+                  {message.replies.length} 件の返信
+                </span>
               </div>
             </CardContent>
           </Card>
@@ -114,7 +173,7 @@ export default function Component() {
             新しいメッセージを作成
           </Button>
         </DialogTrigger>
-        <DialogContent className="bg-white">
+        <DialogContent className="bg-white max-h-[80vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>新しいメッセージ</DialogTitle>
           </DialogHeader>
@@ -126,11 +185,19 @@ export default function Component() {
           open={!!selectedMessage}
           onOpenChange={() => setSelectedMessage(null)}
         >
-          <DialogContent className="bg-white">
+          <DialogContent className="bg-white max-h-[80vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>メッセージ詳細</DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
+              <div className="aspect-video relative">
+                <Image
+                  src={selectedMessage.imageUrl}
+                  alt="Message image"
+                  fill
+                  className="object-cover rounded-md"
+                />
+              </div>
               <p>
                 <span className="font-semibold">To:</span> {selectedMessage.to}
               </p>
@@ -152,6 +219,23 @@ export default function Component() {
                   className="rounded-lg"
                 />
               </div>
+              <div className="mt-4">
+                <h3 className="font-semibold mb-2">返信</h3>
+                {selectedMessage.replies.map((reply) => (
+                  <div
+                    key={reply.id}
+                    className="bg-purple-50 p-2 rounded-md mb-2"
+                  >
+                    <p className="font-semibold text-sm text-purple-700">
+                      {reply.from}:
+                    </p>
+                    <p className="text-purple-800">{reply.content}</p>
+                  </div>
+                ))}
+              </div>
+              <ReplyForm
+                onSubmit={(reply) => addReply(selectedMessage.id, reply)}
+              />
             </div>
           </DialogContent>
         </Dialog>
@@ -163,20 +247,26 @@ export default function Component() {
 function NewMessageForm({
   onSubmit,
 }: {
-  onSubmit: (message: Omit<Message, "id" | "likes">) => void;
+  onSubmit: (message: Omit<Message, "id" | "likes" | "replies">) => void;
 }) {
   const [to, setTo] = useState("");
   const [from, setFrom] = useState("");
   const [message, setMessage] = useState(predefinedMessages[0]);
   const [treat, setTreat] = useState("");
+  const [imageUrl, setImageUrl] = useState(predefinedImages[0]);
+  const [messageInputType, setMessageInputType] = useState<"select" | "custom">(
+    "select"
+  );
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit({ to, from, message, treat });
+    onSubmit({ to, from, message, treat, imageUrl });
     setTo("");
     setFrom("");
-    setMessage(predefinedMessages[0]);
+    setMessage(messageInputType === "select" ? predefinedMessages[0] : "");
     setTreat("");
+    setImageUrl(predefinedImages[0]);
+    setMessageInputType("select");
   };
 
   return (
@@ -200,20 +290,52 @@ function NewMessageForm({
         />
       </div>
       <div>
-        <Label htmlFor="message">メッセージ</Label>
-        <Select value={message} onValueChange={setMessage} required>
-          <SelectTrigger>
-            <SelectValue placeholder="メッセージを選択" />
-          </SelectTrigger>
-          <SelectContent>
-            {predefinedMessages.map((msg, index) => (
-              <SelectItem key={index} value={msg}>
-                {msg}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <Label>メッセージ入力方法</Label>
+        <div className="flex space-x-2 mt-1">
+          <Button
+            type="button"
+            variant={messageInputType === "select" ? "default" : "outline"}
+            onClick={() => setMessageInputType("select")}
+          >
+            定型文から選択
+          </Button>
+          <Button
+            type="button"
+            variant={messageInputType === "custom" ? "default" : "outline"}
+            onClick={() => setMessageInputType("custom")}
+          >
+            自由に入力
+          </Button>
+        </div>
       </div>
+      {messageInputType === "select" ? (
+        <div>
+          <Label htmlFor="message">メッセージ</Label>
+          <Select value={message} onValueChange={setMessage} required>
+            <SelectTrigger>
+              <SelectValue placeholder="メッセージを選択" />
+            </SelectTrigger>
+            <SelectContent>
+              {predefinedMessages.map((msg, index) => (
+                <SelectItem key={index} value={msg}>
+                  {msg}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      ) : (
+        <div>
+          <Label htmlFor="customMessage">カスタムメッセージ</Label>
+          <Textarea
+            id="customMessage"
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            required
+            className="min-h-[100px]"
+          />
+        </div>
+      )}
       <div>
         <Label htmlFor="treat">お菓子</Label>
         <Select value={treat} onValueChange={setTreat} required>
@@ -227,11 +349,80 @@ function NewMessageForm({
           </SelectContent>
         </Select>
       </div>
+      <div>
+        <Label htmlFor="image">画像</Label>
+        <Select value={imageUrl} onValueChange={setImageUrl} required>
+          <SelectTrigger>
+            <SelectValue placeholder="画像を選択" />
+          </SelectTrigger>
+          <SelectContent>
+            {predefinedImages.map((img, index) => (
+              <SelectItem key={index} value={img}>
+                画像 {index + 1}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+      <div className="aspect-video relative">
+        <Image
+          src={imageUrl}
+          alt="Selected image"
+          fill
+          className="object-cover rounded-md"
+        />
+      </div>
       <Button
         type="submit"
         className="bg-purple-600 hover:bg-purple-700 text-white"
       >
         送信
+      </Button>
+    </form>
+  );
+}
+
+function ReplyForm({
+  onSubmit,
+}: {
+  onSubmit: (reply: Omit<Reply, "id">) => void;
+}) {
+  const [from, setFrom] = useState("");
+  const [content, setContent] = useState("");
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSubmit({ from, content });
+    setFrom("");
+    setContent("");
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div>
+        <Label htmlFor="replyFrom">From</Label>
+        <Input
+          id="replyFrom"
+          value={from}
+          onChange={(e) => setFrom(e.target.value)}
+          required
+        />
+      </div>
+      <div>
+        <Label htmlFor="replyContent">返信内容</Label>
+        <Textarea
+          id="replyContent"
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          required
+          className="min-h-[100px]"
+        />
+      </div>
+      <Button
+        type="submit"
+        className="bg-purple-600 hover:bg-purple-700 text-white"
+      >
+        返信を送信
       </Button>
     </form>
   );
