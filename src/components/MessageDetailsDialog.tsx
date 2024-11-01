@@ -5,8 +5,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+} from "@/components/ui/dialog"; // DialogTrigger は未使用のため削除しました
 import Image from "next/image";
 import ReplyForm from "./ReplyForm";
 import { useState } from "react";
@@ -22,6 +21,7 @@ export default function MessageDetailsDialog({
   onClose: () => void;
   onReply: (reply: Omit<Reply, "id">) => void;
 }) {
+  // selectedMessageは、ユーザーが選択したメッセージを保持するための状態です
   const [selectedMessage, setSelectedMessage] = useState<Message | null>(
     message
   );
@@ -57,6 +57,15 @@ export default function MessageDetailsDialog({
         <div className="space-y-4">
           {selectedMessage && (
             <>
+              <div className="aspect-video relative">
+                {/* selectedMessageの画像URLをImageコンポーネントで表示します */}
+                <Image
+                  src={selectedMessage.imageUrl}
+                  alt="Message image"
+                  fill
+                  className="object-cover rounded-md"
+                />
+              </div>
               <p>
                 <span className="font-semibold">To:</span> {selectedMessage.to}
               </p>
@@ -69,7 +78,15 @@ export default function MessageDetailsDialog({
                 {selectedMessage.message}
               </p>
               <div>
+                {/* お菓子の情報を表示する画像 */}
                 <p className="font-semibold mb-2">お菓子:</p>
+                <Image
+                  src={`/placeholder.svg?height=200&width=200&text=${selectedMessage.treat}`}
+                  alt={selectedMessage.treat}
+                  width={200}
+                  height={200}
+                  className="rounded-lg"
+                />
               </div>
               <div className="mt-4">
                 <h3 className="font-semibold mb-2">返信</h3>
@@ -85,6 +102,7 @@ export default function MessageDetailsDialog({
                   </div>
                 ))}
               </div>
+              {/* ReplyFormコンポーネントを使用して新しい返信を追加します */}
               <ReplyForm
                 onSubmit={(reply) => addReply(selectedMessage.id, reply)}
               />
