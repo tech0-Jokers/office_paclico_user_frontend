@@ -57,15 +57,6 @@ export default function MessageDetailsDialog({
         <div className="space-y-4">
           {selectedMessage && (
             <>
-              <div className="aspect-video relative">
-                {/* selectedMessageの画像URLをImageコンポーネントで表示します */}
-                <Image
-                  src={selectedMessage.imageUrl}
-                  alt="Message image"
-                  fill
-                  className="object-cover rounded-md"
-                />
-              </div>
               <p>
                 <span className="font-semibold">To:</span> {selectedMessage.to}
               </p>
@@ -77,17 +68,7 @@ export default function MessageDetailsDialog({
                 <span className="font-semibold">メッセージ:</span>{" "}
                 {selectedMessage.message}
               </p>
-              <div>
-                {/* お菓子の情報を表示する画像 */}
-                <p className="font-semibold mb-2">お菓子:</p>
-                <Image
-                  src={`/placeholder.svg?height=200&width=200&text=${selectedMessage.treat}`}
-                  alt={selectedMessage.treat}
-                  width={200}
-                  height={200}
-                  className="rounded-lg"
-                />
-              </div>
+
               <div className="mt-4">
                 <h3 className="font-semibold mb-2">返信</h3>
                 {selectedMessage.replies.map((reply) => (
