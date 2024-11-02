@@ -1,16 +1,15 @@
 import Link from "next/link"; // ページ間リンクを作成するためのコンポーネントをインポート
 import { Button } from "@/components/ui/button"; // shadcn-uiのButtonコンポーネントをインポート
-import { House, Pickaxe, Image, LucideIcon } from "lucide-react"; // 各ページで使うアイコンをインポート
+import { House, Pickaxe, Image } from "lucide-react"; // 各ページで使うアイコンをインポート
 
 // アイコン付きボタンのプロパティ型を定義
 type IconButtonProps = {
   href: string; // ボタンのリンク先URL
-  icon: LucideIcon; // アイコンのコンポーネント型（LucideIconを指定）
+  icon: React.ElementType; // アイコンのコンポーネント型（LucideIconを指定）
   label: string; // ボタンのラベル
 };
 
 // アイコン付きボタンのコンポーネントを定義
-// 各ページボタンの構造を共通化して再利用できるようにします
 function IconButton({ href, icon: Icon, label }: IconButtonProps) {
   return (
     // Linkコンポーネントでボタンをリンク化
@@ -20,7 +19,7 @@ function IconButton({ href, icon: Icon, label }: IconButtonProps) {
         className="flex flex-col items-center space-y-1 w-full text-muted-foreground p-2"
         style={{ width: "60px", height: "60px" }} // ボタンコンテナのサイズを調整
       >
-        {/* size プロパティでアイコンのサイズを指定 */}
+        {/* アイコンを表示 */}
         <Icon style={{ width: "32px", height: "32px" }} />
         <span className="text-xs">{label}</span> {/* ボタンのラベルを表示 */}
       </Button>
@@ -29,7 +28,6 @@ function IconButton({ href, icon: Icon, label }: IconButtonProps) {
 }
 
 // Footerコンポーネントを定義
-// ページ下部に表示されるフッター部分のレイアウトを構成します
 export default function Footer(): JSX.Element {
   return (
     <div className="fixed bottom-0 w-full z-50 bg-background p-1">
