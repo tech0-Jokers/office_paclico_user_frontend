@@ -1,25 +1,26 @@
-// NewMessageForm.tsx
-"use client";
-import Image from "next/image";
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+"use client"; // クライアントサイドでのレンダリングを指定します
+
+import Image from "next/image"; // 画像コンポーネントをインポート
+import { useState } from "react"; // useStateフックをインポート
+import { Button } from "@/components/ui/button"; // ボタンコンポーネントをインポート
+import { Input } from "@/components/ui/input"; // 入力コンポーネントをインポート
+import { Label } from "@/components/ui/label"; // ラベルコンポーネントをインポート
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { predefinedMessages, predefinedImages } from "@/components/constants";
+} from "@/components/ui/select"; // セレクトコンポーネントをインポート
+import { Textarea } from "@/components/ui/textarea"; // テキストエリアコンポーネントをインポート
+import { predefinedMessages, predefinedImages } from "@/components/constants"; // 定義済みメッセージと画像をインポート
+import { Message } from "@/components/types"; // Message型をインポート
 
 // 新しいメッセージを作成するフォームコンポーネント
 export default function NewMessageForm({
   onSubmit,
 }: {
-  onSubmit: (message: Omit<Message, "id" | "likes" | "replies">) => void;
+  onSubmit: (message: Omit<Message, "id" | "likes" | "replies">) => void; // メッセージ送信時のコールバック
 }) {
   // 各フィールドの入力値を管理する状態変数
   const [to, setTo] = useState(""); // 送信先
