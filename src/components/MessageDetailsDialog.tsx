@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/dialog"; // DialogTrigger は未使用のため削除しました
 import ReplyForm from "./ReplyForm";
 import { useState } from "react";
-import { Message, Reply } from "../types";
+import { Message, Reply } from "@/components/types";
 
 // 選択されたメッセージの詳細を表示するダイアログ
 export default function MessageDetailsDialog({
