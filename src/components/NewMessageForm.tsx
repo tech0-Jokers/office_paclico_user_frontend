@@ -16,6 +16,13 @@ import { Textarea } from "@/components/ui/textarea"; // テキストエリアコ
 import { predefinedMessages } from "@/components/constants"; // 定義済みメッセージをインポート
 import { Message } from "@/components/types"; // Message型をインポート
 
+// チョコレートの型定義
+interface Chocolate {
+  Index: number;
+  Product_Name: string;
+  Image_Url: string;
+}
+
 // 新しいメッセージを作成するフォームコンポーネント
 export default function NewMessageForm({
   onSubmit,
@@ -31,7 +38,7 @@ export default function NewMessageForm({
   const [messageInputType, setMessageInputType] = useState<"select" | "custom">(
     "select"
   ); // メッセージ入力方法の選択
-  const [chocolates, setChocolates] = useState([]); // チョコレートのデータを格納する状態変数
+  const [chocolates, setChocolates] = useState<Chocolate[]>([]); // チョコレートのデータを格納する状態変数
 
   // コンポーネントのマウント時にチョコレートデータを取得
   useEffect(() => {
