@@ -1,3 +1,4 @@
+// types.tsの中に、型定義を記述する
 // メッセージの型
 export type Message = {
   id: number;
