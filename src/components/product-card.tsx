@@ -12,6 +12,7 @@ import {
   CardDescription,
 } from "@/components/ui/card"; // カードコンポーネントの各部分をインポート
 import { Input } from "@/components/ui/input"; // 入力フィールドをインポート
+import Image from "next/image"; // Imageコンポーネントをインポート
 
 // プロダクトカードに渡されるプロパティの型を定義します
 interface ProductCardProps {
@@ -53,9 +54,11 @@ export function ProductCard({
       <CardHeader>
         {" "}
         {/* カードのヘッダー部分 */}
-        <img
-          src={imageSrc} // 商品画像
+        <Image
+          src={imageSrc} // 商品画像のURL
           alt={name} // 画像の説明（アクセシビリティ向上のため）
+          width={500} // 適切な幅を指定（例：500）
+          height={200} // 適切な高さを指定（例：200）
           className="w-full h-48 object-cover rounded-t-lg" // スタイルの設定
         />
         <CardTitle>{name}</CardTitle> {/* 商品名を表示 */}
