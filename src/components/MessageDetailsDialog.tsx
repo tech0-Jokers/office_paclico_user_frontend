@@ -3,8 +3,7 @@
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
+  DialogTitle, // DialogTitleをインポート
   DialogDescription, // DialogDescriptionをインポート
 } from "@/components/ui/dialog"; // Dialogコンポーネント群をインポート
 import ReplyForm from "./ReplyForm"; // 返信フォームコンポーネントをインポート
@@ -58,50 +57,43 @@ export default function MessageDetailsDialog({
         aria-labelledby="dialog-title" // ダイアログタイトルのIDを指定
         aria-describedby="dialog-description" // 説明のIDを指定
       >
-        <DialogHeader>
-          <DialogTitle id="dialog-title">メッセージ詳細</DialogTitle>{" "}
-          {/* ダイアログのタイトル */}
-        </DialogHeader>
+        <DialogTitle id="dialog-title">メッセージ詳細</DialogTitle>
+        {/* ダイアログのタイトルを表示 */}
+
         <DialogDescription id="dialog-description">
-          {" "}
-          {/* 説明を追加 */}
           こちらは選択されたメッセージの詳細です。
+          {/* ダイアログの説明を追加 */}
         </DialogDescription>
+
         <div className="space-y-4">
-          {" "}
-          {/* 説明のためのコンテナ */}
           {selectedMessage && ( // 選択されたメッセージが存在する場合
             <>
               <p>
                 <span className="font-semibold">To:</span> {selectedMessage.to}{" "}
-                {/* 受取人 */}
+                {/* 受取人の表示 */}
               </p>
               <p>
                 <span className="font-semibold">From:</span>{" "}
-                {selectedMessage.from} {/* 送信者 */}
+                {selectedMessage.from} {/* 送信者の表示 */}
               </p>
               <p>
                 <span className="font-semibold">メッセージ:</span>{" "}
-                {selectedMessage.message} {/* メッセージ内容 */}
+                {selectedMessage.message} {/* メッセージ内容の表示 */}
               </p>
 
               <div className="mt-4">
                 <h3 className="font-semibold mb-2">返信</h3>
-                {selectedMessage.replies.map(
-                  (
-                    reply // 返信リストを表示
-                  ) => (
-                    <div
-                      key={reply.id}
-                      className="bg-purple-50 p-2 rounded-md mb-2" // スタイルを適用
-                    >
-                      <p className="font-semibold text-sm text-purple-700">
-                        {reply.from}:
-                      </p>
-                      <p className="text-purple-800">{reply.content}</p>
-                    </div>
-                  )
-                )}
+                {selectedMessage.replies.map((reply) => (
+                  <div
+                    key={reply.id}
+                    className="bg-purple-50 p-2 rounded-md mb-2" // スタイルを適用
+                  >
+                    <p className="font-semibold text-sm text-purple-700">
+                      {reply.from}:
+                    </p>
+                    <p className="text-purple-800">{reply.content}</p>
+                  </div>
+                ))}
               </div>
 
               {/* ReplyFormコンポーネントを使用して新しい返信を追加します */}
