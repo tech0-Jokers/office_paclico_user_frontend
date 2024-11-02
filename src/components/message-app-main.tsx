@@ -19,7 +19,7 @@ export default function MessageApp() {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
-      to: "田中さん",
+      to: "高橋さん",
       from: "鈴木",
       message: "ありがとうございます！",
       treat: "チョコレート",
@@ -29,10 +29,10 @@ export default function MessageApp() {
     },
     {
       id: 2,
-      to: "佐藤さん",
+      to: "伊藤さん",
       from: "高橋",
       message: "頑張ってください！",
-      treat: "クッキー",
+      treat: "クラッカー",
       likes: 0,
       replies: [],
       imageUrl: "/placeholder.svg?height=200&width=200&text=Image1",
