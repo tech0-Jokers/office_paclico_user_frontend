@@ -1,7 +1,7 @@
 // MessageList.tsx
 "use client";
 import { useState } from "react";
-import MessageCard from "@/components/message-card";
+import MessageCard from "@/components/MessageCard";
 import { Message } from "@/types";
 
 const predefinedImages = [
