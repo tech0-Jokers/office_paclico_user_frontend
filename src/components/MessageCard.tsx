@@ -27,6 +27,7 @@ export default function MessageCard({
             alt="Message image"
             fill
             className="object-cover rounded-md"
+            priority // 優先的に読み込む
           />
         </div>
         <p className="font-semibold text-purple-700">To: {message.to}</p>

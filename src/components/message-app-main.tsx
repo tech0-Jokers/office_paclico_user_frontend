@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import MessageCard from "./MessageCard"; // メッセージカードコンポーネントのインポート
 import NewMessageForm from "./NewMessageForm"; // 新しいメッセージフォームのインポート
 import MessageDetailsDialog from "./MessageDetailsDialog"; // メッセージ詳細ダイアログのインポート
@@ -15,47 +15,48 @@ import { Message, Reply } from "@/components/types"; // 型定義をインポー
 
 // メインのアプリケーションコンポーネント
 export default function MessageApp() {
-  // メッセージと選択されたメッセージを管理する状態
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: 1,
-      to: "高橋さん",
-      from: "鈴木",
-      message: "ありがとうございます！",
-      treat: "チョコレート",
-      likes: 0,
-      replies: [],
-      imageUrl: "/placeholder.svg?height=200&width=200&text=Image1",
-    },
-    {
-      id: 2,
-      to: "伊藤さん",
-      from: "高橋",
-      message: "頑張ってください！",
-      treat: "クラッカー",
-      likes: 0,
-      replies: [],
-      imageUrl: "/placeholder.svg?height=200&width=200&text=Image1",
-    },
-    // 他のメッセージも同様に定義可能
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [selectedMessage, setSelectedMessage] = useState<Message | null>(null);
+  const [error, setError] = useState<string | null>(null); // エラーメッセージのための状態
+  const [loading, setLoading] = useState<boolean>(false); // ローディング状態のための状態
+
+  // APIからメッセージを取得する関数
+  const fetchMessages = async () => {
+    setLoading(true); // データ取得開始時にローディング状態をセット
+    try {
+      const response = await fetch("/api/messages"); // APIエンドポイントを指定
+      if (!response.ok) {
+        throw new Error("メッセージの取得に失敗しました");
+      }
+      const data: Message[] = await response.json();
+      setMessages(data);
+    } catch (error) {
+      console.error(error);
+      setError(error.message); // エラーメッセージを状態にセット
+    } finally {
+      setLoading(false); // データ取得完了時にローディング状態を解除
+    }
+  };
+
+  useEffect(() => {
+    fetchMessages(); // コンポーネントのマウント時にメッセージを取得
+  }, []);
 
   // 新しいメッセージを追加する関数
   const addMessage = (
     newMessage: Omit<Message, "id" | "likes" | "replies">
   ) => {
-    setMessages([
-      ...messages,
-      { ...newMessage, id: messages.length + 1, likes: 0, replies: [] },
+    setMessages((prevMessages) => [
+      ...prevMessages,
+      { ...newMessage, id: prevMessages.length + 1, likes: 0, replies: [] },
     ]);
   };
 
   // メッセージに「いいね」を追加する関数
   const handleLike = (e: React.MouseEvent, id: number) => {
     e.stopPropagation(); // 親要素のクリックイベントを止める
-    setMessages(
-      messages.map((msg) =>
+    setMessages((prevMessages) =>
+      prevMessages.map((msg) =>
         msg.id === id ? { ...msg, likes: msg.likes + 1 } : msg
       )
     );
@@ -63,8 +64,8 @@ export default function MessageApp() {
 
   // メッセージに返信を追加する関数
   const addReply = (messageId: number, reply: Omit<Reply, "id">) => {
-    setMessages(
-      messages.map((msg) =>
+    setMessages((prevMessages) =>
+      prevMessages.map((msg) =>
         msg.id === messageId
           ? {
               ...msg,
@@ -83,7 +84,10 @@ export default function MessageApp() {
       <h1 className="text-3xl font-bold text-purple-800 mb-8">
         メッセージアプリ
       </h1>
-      {/* 新しいメッセージを作成するためのダイアログ */}
+      {loading && <p>メッセージを取得中です...</p>}{" "}
+      {/* ローディングインジケーター */}
+      {error && <p className="text-red-500">{error}</p>}{" "}
+      {/* エラーメッセージ表示 */}
       <div className="flex justify-start mb-4">
         <Dialog>
           <DialogTrigger asChild>
@@ -99,11 +103,8 @@ export default function MessageApp() {
           </DialogContent>
         </Dialog>
       </div>
-
       {/* メッセージ一覧を表示 */}
-
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-        {/* メッセージごとにMessageCardコンポーネントを表示 */}
         {messages.map((message) => (
           <MessageCard
             key={message.id}
@@ -113,8 +114,6 @@ export default function MessageApp() {
           />
         ))}
       </div>
-
-      {/* 選択されたメッセージの詳細を表示するダイアログ */}
       {selectedMessage && (
         <MessageDetailsDialog
           message={selectedMessage}

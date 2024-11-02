@@ -5,8 +5,8 @@ import MessageCard from "@/components/MessageCard";
 import { Message } from "@/components/types";
 
 const predefinedImages = [
-  "/placeholder1.png",
-  "/placeholder2.png",
+  "https://www.meiji.co.jp/products/chocolate/assets/img/22639_small.jpg",
+  "https://www.meiji.co.jp/products/chocolate/assets/img/4902777200217_small.jpg",
   "/placeholder3.png",
 ];
 
