@@ -26,13 +26,17 @@ export default function MessageApp() {
     try {
       const response = await fetch("/api/messages"); // APIエンドポイントを指定
       if (!response.ok) {
-        throw new Error("メッセージの取得に失敗しました");
+        throw new Error("メッセージの取得に失敗しました"); // エラーをスロー
       }
       const data: Message[] = await response.json();
       setMessages(data);
     } catch (error) {
       console.error(error);
-      setError(error.message); // エラーメッセージを状態にセット
+
+      // errorがError型であることを確認
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error occurred";
+      setError(errorMessage); // エラーメッセージを状態にセット
     } finally {
       setLoading(false); // データ取得完了時にローディング状態を解除
     }
