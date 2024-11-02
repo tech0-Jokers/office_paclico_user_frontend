@@ -1,7 +1,7 @@
 "use client"; // クライアントサイドでのレンダリングを指定します
 
 import Image from "next/image"; // 画像コンポーネントをインポート
-import { useState } from "react"; // useStateフックをインポート
+import { useState, useEffect } from "react"; // useStateとuseEffectフックをインポート
 import { Button } from "@/components/ui/button"; // ボタンコンポーネントをインポート
 import { Input } from "@/components/ui/input"; // 入力コンポーネントをインポート
 import { Label } from "@/components/ui/label"; // ラベルコンポーネントをインポート
@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"; // セレクトコンポーネントをインポート
 import { Textarea } from "@/components/ui/textarea"; // テキストエリアコンポーネントをインポート
-import { predefinedMessages, predefinedImages } from "@/components/constants"; // 定義済みメッセージと画像をインポート
+import { predefinedMessages } from "@/components/constants"; // 定義済みメッセージをインポート
 import { Message } from "@/components/types"; // Message型をインポート
 
 // 新しいメッセージを作成するフォームコンポーネント
@@ -27,10 +27,31 @@ export default function NewMessageForm({
   const [from, setFrom] = useState(""); // 送信元
   const [message, setMessage] = useState(predefinedMessages[0]); // メッセージ内容
   const [treat, setTreat] = useState(""); // お菓子の種類
-  const [imageUrl, setImageUrl] = useState(predefinedImages[0]); // 画像URL
+  const [imageUrl, setImageUrl] = useState(""); // 画像URL
   const [messageInputType, setMessageInputType] = useState<"select" | "custom">(
     "select"
   ); // メッセージ入力方法の選択
+  const [chocolates, setChocolates] = useState([]); // チョコレートのデータを格納する状態変数
+
+  // コンポーネントのマウント時にチョコレートデータを取得
+  useEffect(() => {
+    const fetchChocolates = async () => {
+      const response = await fetch("/api/chocolate"); // APIからデータを取得
+      const data = await response.json(); // JSON形式にパース
+      setChocolates(data.chocolates); // 状態を更新
+    };
+
+    fetchChocolates(); // データ取得関数を呼び出し
+  }, []);
+
+  // お菓子選択時の処理
+  const handleTreatChange = (value: string) => {
+    setTreat(value); // お菓子を選択
+    const selectedChocolate = chocolates.find(
+      (choco) => choco.Product_Name === value
+    );
+    setImageUrl(selectedChocolate ? selectedChocolate.Image_Url : ""); // 選択したお菓子の画像URLをセット
+  };
 
   // フォーム送信時の処理
   const handleSubmit = (e: React.FormEvent) => {
@@ -41,7 +62,7 @@ export default function NewMessageForm({
     setFrom("");
     setMessage(messageInputType === "select" ? predefinedMessages[0] : "");
     setTreat("");
-    setImageUrl(predefinedImages[0]);
+    setImageUrl("");
     setMessageInputType("select");
   };
 
@@ -119,42 +140,30 @@ export default function NewMessageForm({
       {/* お菓子の種類選択 */}
       <div>
         <Label htmlFor="treat">お菓子</Label>
-        <Select value={treat} onValueChange={setTreat} required>
+        <Select value={treat} onValueChange={handleTreatChange} required>
           <SelectTrigger>
             <SelectValue placeholder="お菓子を選択" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="チョコレート">チョコレート</SelectItem>
-            <SelectItem value="クッキー">クッキー</SelectItem>
-            <SelectItem value="キャンディ">キャンディ</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-      {/* 画像選択 */}
-      <div>
-        <Label htmlFor="image">画像</Label>
-        <Select value={imageUrl} onValueChange={setImageUrl} required>
-          <SelectTrigger>
-            <SelectValue placeholder="画像を選択" />
-          </SelectTrigger>
-          <SelectContent>
-            {predefinedImages.map((img, index) => (
-              <SelectItem key={index} value={img}>
-                画像 {index + 1}
+            {chocolates.map((chocolate) => (
+              <SelectItem key={chocolate.Index} value={chocolate.Product_Name}>
+                {chocolate.Product_Name}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
       </div>
       {/* 選択した画像のプレビュー */}
-      <div className="aspect-video relative">
-        <Image
-          src={imageUrl}
-          alt="Selected image"
-          layout="fill" // Next.jsのImageコンポーネントの場合、`fill`レイアウトを指定します。
-          className="object-cover rounded-md"
-        />
-      </div>
+      {imageUrl && (
+        <div className="aspect-video relative">
+          <Image
+            src={imageUrl}
+            alt="Selected treat image"
+            layout="fill" // Next.jsのImageコンポーネントの場合、`fill`レイアウトを指定します。
+            className="object-cover rounded-md"
+          />
+        </div>
+      )}
 
       {/* 送信ボタン */}
       <Button
