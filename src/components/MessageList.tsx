@@ -2,7 +2,7 @@
 "use client";
 import { useState } from "react";
 import MessageCard from "@/components/MessageCard";
-import { Message } from "@/types";
+import { Message } from "@/components/types";
 
 const predefinedImages = [
   "/placeholder1.png",
