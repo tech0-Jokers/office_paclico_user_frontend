@@ -26,6 +26,11 @@ export async function GET() {
     return NextResponse.json({ chocolates: data }, { status: 200 });
   } catch (error) {
     console.error("お菓子のデータを取得中にエラーが発生しました:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+
+    // errorの型をErrorにキャストしてmessageを取得
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error occurred";
+
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }
