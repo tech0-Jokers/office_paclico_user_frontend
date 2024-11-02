@@ -28,7 +28,7 @@ export default function MessageDetailsDialog({
   // 返信を追加する関数
   const addReply = (messageId: string, replyContent: Omit<Reply, "id">) => {
     const newReply: Reply = {
-      id: String(Date.now()), // 一意のIDを生成
+      id: Date.now(), // 数値型のIDを生成
       ...replyContent,
     };
     // 返信追加
