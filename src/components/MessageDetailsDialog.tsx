@@ -1,14 +1,14 @@
-// MessageDetailsDialog.tsx
-"use client";
+"use client"; // クライアントサイドでのレンダリングを指定します
+
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"; // DialogTrigger は未使用のため削除しました
-import ReplyForm from "./ReplyForm";
-import { useState } from "react";
-import { Message, Reply } from "@/components/types";
+import ReplyForm from "./ReplyForm"; // 返信フォームコンポーネントをインポート
+import { useState } from "react"; // ReactのuseStateフックをインポート
+import { Message, Reply } from "@/components/types"; // 型定義をインポート
 
 // 選択されたメッセージの詳細を表示するダイアログ
 export default function MessageDetailsDialog({
@@ -16,26 +16,26 @@ export default function MessageDetailsDialog({
   onClose,
   onReply,
 }: {
-  message: Message;
-  onClose: () => void;
-  onReply: (reply: Omit<Reply, "id">) => void;
+  message: Message; // メッセージのデータ
+  onClose: () => void; // ダイアログを閉じる関数
+  onReply: (reply: Omit<Reply, "id">) => void; // 返信を処理する関数
 }) {
   // selectedMessageは、ユーザーが選択したメッセージを保持するための状態です
   const [selectedMessage, setSelectedMessage] = useState<Message | null>(
-    message
+    message // 初期値として渡されたメッセージを設定
   );
 
   // 返信を追加する関数
-  const addReply = (messageId: string, replyContent: Omit<Reply, "id">) => {
+  const addReply = (messageId: number, replyContent: Omit<Reply, "id">) => {
     const newReply: Reply = {
       id: Date.now(), // 数値型のIDを生成
-      ...replyContent,
+      ...replyContent, // 返信内容を展開
     };
-    // 返信追加
+    // 返信を追加するロジック
     if (selectedMessage) {
       setSelectedMessage({
         ...selectedMessage,
-        replies: [...selectedMessage.replies, newReply],
+        replies: [...selectedMessage.replies, newReply], // 新しい返信を追加
       });
     }
     onReply(newReply); // 外部から渡されたonReplyコールバックを呼び出し
@@ -43,10 +43,10 @@ export default function MessageDetailsDialog({
 
   return (
     <Dialog
-      open={!!selectedMessage}
+      open={!!selectedMessage} // selectedMessageが存在する場合、ダイアログを開く
       onOpenChange={() => {
-        setSelectedMessage(null);
-        onClose();
+        setSelectedMessage(null); // ダイアログを閉じたときに選択されたメッセージをリセット
+        onClose(); // onCloseコールバックを呼び出す
       }}
     >
       <DialogContent className="bg-white max-h-[80vh] overflow-y-auto">
@@ -84,7 +84,7 @@ export default function MessageDetailsDialog({
               </div>
               {/* ReplyFormコンポーネントを使用して新しい返信を追加します */}
               <ReplyForm
-                onSubmit={(reply) => addReply(selectedMessage.id, reply)}
+                onSubmit={(reply) => addReply(selectedMessage.id, reply)} // IDを直接渡す
               />
             </>
           )}
