@@ -4,7 +4,6 @@ import { useState, useEffect } from "react"; // Reactのフックをインポー
 import { ShoppingCart } from "lucide-react"; // ショッピングカートアイコンをインポート
 import { Button } from "@/components/ui/button"; // ボタンコンポーネントをインポート
 import { ProductCard } from "@/components/product-card"; // 商品カードコンポーネントをインポート
-import Image from "next/image"; // Imageコンポーネントをインポート
 
 // お菓子のデータ型を定義します
 type Candy = {

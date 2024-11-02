@@ -83,6 +83,25 @@ export default function MessageApp() {
       <h1 className="text-3xl font-bold text-purple-800 mb-8">
         メッセージアプリ
       </h1>
+      {/* 新しいメッセージを作成するためのダイアログ */}
+      <div className="flex justify-start mb-4">
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button className="bg-purple-600 hover:bg-purple-700 text-white">
+              新しいメッセージを作成
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="bg-white max-h-[80vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>新しいメッセージ</DialogTitle>
+            </DialogHeader>
+            <NewMessageForm onSubmit={addMessage} />
+          </DialogContent>
+        </Dialog>
+      </div>
+
+      {/* メッセージ一覧を表示 */}
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
         {/* メッセージごとにMessageCardコンポーネントを表示 */}
         {messages.map((message) => (
@@ -94,20 +113,7 @@ export default function MessageApp() {
           />
         ))}
       </div>
-      {/* 新しいメッセージを作成するためのダイアログ */}
-      <Dialog>
-        <DialogTrigger asChild>
-          <Button className="bg-purple-600 hover:bg-purple-700 text-white">
-            新しいメッセージを作成
-          </Button>
-        </DialogTrigger>
-        <DialogContent className="bg-white max-h-[80vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>新しいメッセージ</DialogTitle>
-          </DialogHeader>
-          <NewMessageForm onSubmit={addMessage} />
-        </DialogContent>
-      </Dialog>
+
       {/* 選択されたメッセージの詳細を表示するダイアログ */}
       {selectedMessage && (
         <MessageDetailsDialog
