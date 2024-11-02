@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"; // Reactのフックをインポー
 import { ShoppingCart } from "lucide-react"; // ショッピングカートアイコンをインポート
 import { Button } from "@/components/ui/button"; // ボタンコンポーネントをインポート
 import { ProductCard } from "@/components/product-card"; // 商品カードコンポーネントをインポート
+import Image from "next/image"; // Imageコンポーネントをインポート
 
 // お菓子のデータ型を定義します
 type Candy = {
@@ -63,7 +64,7 @@ export default function CandyShop() {
 
     // お菓子データを取得する関数を実行
     fetchCandies();
-  }, [apiUrl]); // apiUrlが変更されたときに再実行
+  }, []); // apiUrlを依存関係から削除
 
   // カートに商品を追加する関数
   const addToCart = (id: number, quantity: number) => {
@@ -112,13 +113,11 @@ export default function CandyShop() {
   // JSXのレンダリング部分
   return (
     <div className="container mx-auto p-4">
-      {" "}
       {/* コンテナのスタイル */}
-      <h1 className="text-3xl font-bold mb-6">お菓子ショップ</h1>{" "}
+      <h1 className="text-3xl font-bold mb-6">お菓子ショップ</h1>
       {/* ショップタイトル */}
       {/* お菓子一覧の表示 */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {" "}
         {/* レスポンシブなグリッドレイアウト */}
         {candies.map((candy) => (
           <ProductCard
@@ -135,10 +134,8 @@ export default function CandyShop() {
       </div>
       {/* カートの表示 */}
       <div className="mt-8 p-4 bg-muted rounded-lg">
-        {" "}
         {/* カートのスタイル */}
         <h2 className="text-2xl font-bold mb-4 flex items-center">
-          {" "}
           {/* カートタイトル */}
           <ShoppingCart className="mr-2" /> {/* カートアイコン */}
           カート
@@ -163,7 +160,7 @@ export default function CandyShop() {
             </div>
           ) : null; // 商品データが見つからなければ何も表示しない
         })}
-        <div className="text-xl font-bold mt-4">合計: ¥{getTotalPrice()}</div>{" "}
+        <div className="text-xl font-bold mt-4">合計: ¥{getTotalPrice()}</div>
         {/* カートの合計金額を表示 */}
       </div>
     </div>
