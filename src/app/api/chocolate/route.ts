@@ -14,26 +14,18 @@ const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 // GETリクエストを処理する関数
 export async function GET() {
-  // APIからお菓子のデータを取得するためのリクエストを行います
   try {
-    // 環境変数から取得したAPIのURLに接続します
     const response = await fetch(`${apiUrl}/chocolates`);
 
-    // レスポンスが正常でない場合はエラーをスローします
     if (!response.ok) {
       throw new Error(`お菓子のデータの取得に失敗しました: ${response.status}`);
     }
 
-    // レスポンスのデータをJSON形式で取得します
-    const data = await response.json();
+    const data: Chocolate[] = await response.json(); // 取得したデータをChocolate型の配列として指定
 
-    // 取得したデータをJSON形式で返します
     return NextResponse.json({ chocolates: data }, { status: 200 });
   } catch (error) {
-    // エラーが発生した場合、エラーメッセージをログに出力します
     console.error("お菓子のデータを取得中にエラーが発生しました:", error);
-
-    // エラーメッセージをJSON形式で返します
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
