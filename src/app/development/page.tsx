@@ -1,5 +1,5 @@
-import CandyShop from "@/components/candy-shop"; // コンポーネントのインポート
-import ChocolateShop from "@/components/chocolate-shop"; // コンポーネントのインポート
+import CandyShop from "@/components/CandyShop"; // コンポーネントのインポート
+import ChocolateShop from "@/components/ChocolateShop"; // コンポーネントのインポート
 
 export default function HomePage() {
   return (
