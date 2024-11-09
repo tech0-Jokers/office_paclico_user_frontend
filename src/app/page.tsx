@@ -1,4 +1,4 @@
-import MessageAppMain from "@/components/message-app-main"; // コンポーネントのインポート
+import MessageAppMain from "@/components/MessageApp"; // コンポーネントのインポート
 
 export default function HomePage() {
   return (
