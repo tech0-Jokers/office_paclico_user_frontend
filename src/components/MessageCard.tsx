@@ -26,7 +26,7 @@ export default function MessageCard({
             src={message.imageUrl}
             alt="Message image"
             fill
-            className="object-cover rounded-md"
+            className="object-contain rounded-md"
             priority // 優先的に読み込む
           />
         </div>

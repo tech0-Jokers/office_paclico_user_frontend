@@ -75,6 +75,34 @@ export default function NewMessageForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      {/* お菓子の種類選択 */}
+      <div>
+        <Label htmlFor="treat">お菓子</Label>
+        <Select value={treat} onValueChange={handleTreatChange} required>
+          <SelectTrigger>
+            <SelectValue placeholder="お菓子を選択" />
+          </SelectTrigger>
+          <SelectContent>
+            {chocolates.map((chocolate) => (
+              <SelectItem key={chocolate.Index} value={chocolate.Product_Name}>
+                {chocolate.Product_Name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+      {/* 選択した画像のプレビュー */}
+      {imageUrl && (
+        <div className="aspect-video relative">
+          <Image
+            src={imageUrl}
+            alt="Selected treat image"
+            layout="fill" // Next.jsのImageコンポーネントの場合、`fill`レイアウトを指定します。
+            className="object-contain rounded-md"
+          />
+        </div>
+      )}
+
       {/* 送信先フィールド */}
       <div>
         <Label htmlFor="to">To</Label>
@@ -141,33 +169,6 @@ export default function NewMessageForm({
             onChange={(e) => setMessage(e.target.value)}
             required
             className="min-h-[100px]"
-          />
-        </div>
-      )}
-      {/* お菓子の種類選択 */}
-      <div>
-        <Label htmlFor="treat">お菓子</Label>
-        <Select value={treat} onValueChange={handleTreatChange} required>
-          <SelectTrigger>
-            <SelectValue placeholder="お菓子を選択" />
-          </SelectTrigger>
-          <SelectContent>
-            {chocolates.map((chocolate) => (
-              <SelectItem key={chocolate.Index} value={chocolate.Product_Name}>
-                {chocolate.Product_Name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-      {/* 選択した画像のプレビュー */}
-      {imageUrl && (
-        <div className="aspect-video relative">
-          <Image
-            src={imageUrl}
-            alt="Selected treat image"
-            layout="fill" // Next.jsのImageコンポーネントの場合、`fill`レイアウトを指定します。
-            className="object-cover rounded-md"
           />
         </div>
       )}

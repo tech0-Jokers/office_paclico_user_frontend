@@ -39,7 +39,7 @@ export function ProductCard({
           alt={name} // 画像の説明を指定
           width={500} // 幅を指定（適切なサイズに変更）
           height={200} // 高さを指定（適切なサイズに変更）
-          className="w-full h-48 object-cover rounded-t-lg" // スタイルを適用
+          className="w-full h-48 object-contain rounded-t-lg" // スタイルを適用
         />
         <CardTitle>{name}</CardTitle>
       </CardHeader>

@@ -96,7 +96,7 @@ export default function MessageApp() {
         <Dialog>
           <DialogTrigger asChild>
             <Button className="bg-purple-600 hover:bg-purple-700 text-white">
-              新しいメッセージを作成
+              お菓子とお礼のメッセージを送る
             </Button>
           </DialogTrigger>
           <DialogContent className="bg-white max-h-[80vh] overflow-y-auto">

@@ -18,19 +18,10 @@ interface InventryCardProps {
 export function InventryCard({
   name,
   imageSrc,
-  isFavorite,
-  onToggleFavorite,
   onAddToCart,
 }: InventryCardProps) {
-  const [showNotification, setShowNotification] = React.useState(false);
   const [quantity, setQuantity] = React.useState(1);
   const [imageError, setImageError] = React.useState(false);
-
-  const handleToggleFavorite = () => {
-    onToggleFavorite();
-    setShowNotification(true);
-    setTimeout(() => setShowNotification(false), 2000);
-  };
 
   // 画像のエラーハンドリング
   const handleImageError = () => {
@@ -47,7 +38,7 @@ export function InventryCard({
               alt={name}
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              className="object-cover rounded-t-lg"
+              className="object-contain rounded-t-lg"
               onError={handleImageError}
               unoptimized // 外部画像の場合に必要
             />
@@ -73,28 +64,7 @@ export function InventryCard({
             />
             <Button onClick={() => onAddToCart(quantity)}>カートに追加</Button>
           </div>
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={handleToggleFavorite}
-            aria-label={isFavorite ? "お気に入りから削除" : "お気に入りに追加"}
-          >
-            <Star
-              className={`h-4 w-4 ${isFavorite ? "fill-yellow-400" : ""}`}
-            />
-          </Button>
         </div>
-        {showNotification && (
-          <div
-            className="text-sm text-green-600 mt-2 transition-opacity duration-300 ease-in-out"
-            role="status"
-            aria-live="polite"
-          >
-            {isFavorite
-              ? "お気に入りに追加しました"
-              : "お気に入りから削除しました"}
-          </div>
-        )}
       </CardFooter>
     </Card>
   );
