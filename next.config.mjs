@@ -2,7 +2,18 @@
 const nextConfig = {
   output: "standalone",
   images: {
-    domains: ["res.cloudinary.com"], // Cloudinary のホストを追加
+    domains: ["res.cloudinary.com", "www.meiji.co.jp"],
+    unoptimized: true,
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+      },
+      {
+        protocol: "https",
+        hostname: "www.meiji.co.jp",
+      },
+    ],
   },
 };
 

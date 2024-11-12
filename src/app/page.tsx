@@ -1,10 +1,11 @@
-import CandyShop from "@/components/candy-shop"; // コンポーネントのインポート
+import MessageAppMain from "@/components/MessageApp"; // コンポーネントのインポート
 
 export default function HomePage() {
   return (
     <div>
-      <h1>Welcome to the Candy Shop</h1>
-      <CandyShop /> {/* CandyShop コンポーネントを表示 */}
+      <div>
+        <MessageAppMain /> {/* MessageAppMain コンポーネントを表示 */}
+      </div>
     </div>
   );
 }
