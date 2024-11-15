@@ -1,88 +1,79 @@
-// "use client" は、このコンポーネントがクライアントサイドで実行されることを示します。
+// "use client" を指定して、このコンポーネントがクライアントサイドで実行されることを明示します。
 "use client";
 
-// 必要なモジュールやコンポーネントをインポートします。
-import { useState } from "react";
-import { ShoppingCart } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { InventryCard } from "@/components/InventryCard";
+// 必要なモジュールやフックをインポートします。
+import { useEffect, useState } from "react"; // Reactのフック
+import { useRouter } from "next/navigation"; // Next.jsのルーター機能
+import { ShoppingCart } from "lucide-react"; // アイコン
+import { Button } from "@/components/ui/button"; // ボタンコンポーネント
+import { InventryCard } from "@/components/InventryCard"; // 商品カードコンポーネント
 
-// お菓子のデータ型を定義します。
+// お菓子データの型を定義します。
 type Chocolate = {
   product_id: number; // お菓子のID
   product_name: string; // お菓子の名前
   product_image_url: string; // お菓子の画像URL
-  stock_quantity: number; // お菓子の在庫数
+  stock_quantity: number; // 在庫数
 };
 
-// カート内のアイテムのデータ型を定義します。
+// カートアイテムの型を定義します。
 type CartItem = {
-  product_id: number; // お菓子のID
-  quantity: number; // カートに入っている数量
+  product_id: number; // 商品のID
+  quantity: number; // カートに入れた数量
 };
 
-// メインのコンポーネントを定義します。
+// メインのコンポーネント
 export default function ChocolateShop() {
-  // お菓子データを保持するためのステート
-  const [chocolates, setChocolate] = useState<Chocolate[]>([]);
-  // カートに入っている商品情報を管理するステート
-  const [cart, setCart] = useState<CartItem[]>([]);
-  // お気に入りのお菓子のIDリストを管理するステート
-  const [favorites, setFavorites] = useState<number[]>([]);
-  // エラーメッセージを表示するためのステート
-  const [error, setError] = useState<string | null>(null);
-  // 組織IDを入力するためのステート
-  const [organizationId, setOrganizationId] = useState<string>("");
+  const router = useRouter(); // Next.jsのルーター機能を利用
+  const [chocolates, setChocolate] = useState<Chocolate[]>([]); // お菓子のデータを保持するステート
+  const [cart, setCart] = useState<CartItem[]>([]); // カートに追加された商品を管理するステート
+  const [favorites, setFavorites] = useState<number[]>([]); // お気に入りリスト
+  const [error, setError] = useState<string | null>(null); // エラーメッセージを保持するステート
 
-  // お菓子データを取得する関数
-  const fetchChocolates = async () => {
-    // 組織IDが入力されていない場合はエラーメッセージを設定
-    if (!organizationId) {
-      setError("組織IDが設定されていません。");
-      return;
+  // 現在のページURLからクエリパラメータを取得します。
+  const { searchParams } = new URL(window.location.href); // URLオブジェクトを作成
+  const organizationId = searchParams.get("organizationId"); // URLから"organizationId"を取得
+
+  // 初回レンダリング時、またはorganizationIdが変更されたときにデータを取得します。
+  useEffect(() => {
+    if (organizationId) {
+      fetchChocolates(organizationId); // データ取得関数を呼び出す
     }
+  }, [organizationId]); // organizationIdが変化するたびに再実行
 
-    // ローカルのAPIルートにリクエストを送信するためのURLを作成します。
-    const requestUrl = `/api/products/${organizationId}`;
-
+  // APIからお菓子データを取得する非同期関数
+  const fetchChocolates = async (organizationId: string) => {
+    const requestUrl = `/api/products/${organizationId}`; // APIのエンドポイントを作成
     try {
-      // ローカルのAPIルートからデータを取得します。
-      const response = await fetch(requestUrl);
+      const response = await fetch(requestUrl); // APIリクエストを送信
 
-      // レスポンスが正常でない場合はエラーをスローします。
+      // レスポンスがエラーの場合は例外をスロー
       if (!response.ok) {
-        throw new Error(
-          `お菓子のデータの取得に失敗しました: ${response.status}`
-        );
+        throw new Error(`お菓子データの取得に失敗しました: ${response.status}`);
       }
 
-      // レスポンスのJSONデータを取得します。
-      const data = await response.json();
-      // お菓子データのステートを更新します。
-      setChocolate(data);
-      // エラーメッセージをクリアします。
-      setError(null);
+      const data = await response.json(); // レスポンスデータをJSON形式で取得
+      setChocolate(data); // 取得したデータをステートにセット
+      setError(null); // エラーメッセージをクリア
     } catch (error) {
-      // エラーが発生した場合はエラーメッセージを設定します。
-      console.error("お菓子のデータを取得中にエラーが発生しました:", error);
-      setError("データの取得に失敗しました。後でもう一度試してください。");
+      console.error("データ取得中にエラー:", error); // コンソールにエラーを表示
+      setError("データの取得に失敗しました。後でもう一度試してください。"); // ユーザーにエラーメッセージを表示
     }
   };
 
   // カートに商品を追加する関数
   const addToCart = (id: number, quantity: number) => {
     setCart((prevCart) => {
-      // すでにカートにある商品を探します。
-      const existingItem = prevCart.find((item) => item.product_id === id);
+      const existingItem = prevCart.find((item) => item.product_id === id); // 既存のカートアイテムを検索
       if (existingItem) {
-        // すでにカートにある商品は数量を追加します。
+        // 既にカートにある場合は数量を更新
         return prevCart.map((item) =>
           item.product_id === id
             ? { ...item, quantity: item.quantity + quantity }
             : item
         );
       } else {
-        // 新しい商品をカートに追加します。
+        // 新しい商品をカートに追加
         return [...prevCart, { product_id: id, quantity }];
       }
     });
@@ -90,77 +81,64 @@ export default function ChocolateShop() {
 
   // カートから商品を削除する関数
   const removeFromCart = (id: number) => {
-    // 指定されたIDの商品をカートから除外します。
-    setCart((prevCart) => prevCart.filter((item) => item.product_id !== id));
+    setCart((prevCart) => prevCart.filter((item) => item.product_id !== id)); // 指定IDの商品を除外
   };
 
-  // お気に入りの状態を切り替える関数
+  // お気に入りリストのオン・オフを切り替える関数
   const toggleFavorite = (id: number) => {
     setFavorites(
       (prevFavorites) =>
         prevFavorites.includes(id)
-          ? prevFavorites.filter((favId) => favId !== id) // すでにお気に入りなら除外
+          ? prevFavorites.filter((favId) => favId !== id) // 既にお気に入りの場合は削除
           : [...prevFavorites, id] // お気に入りに追加
     );
   };
 
-  // コンポーネントの描画内容を返します。
+  // UIの描画部分
   return (
     <div className="min-h-screen bg-purple-100 p-8">
       <div className="container mx-auto p-4">
-        {/* タイトルを表示 */}
+        {/* ページタイトル */}
         <h1 className="text-3xl font-bold mb-6">Ambassador Shop</h1>
 
-        {/* エラーメッセージがある場合は表示 */}
+        {/* エラーメッセージを表示 */}
         {error && <div className="text-red-500">{error}</div>}
 
-        {/* 組織IDを入力するフォーム */}
-        <div className="mb-4">
-          <label htmlFor="organizationId" className="block font-medium">
-            組織ID
-          </label>
-          <input
-            type="text"
-            id="organizationId"
-            className="w-full p-2 border rounded-md"
-            value={organizationId} // 組織IDのステートをバインド
-            onChange={(e) => setOrganizationId(e.target.value)} // 入力値をステートに反映
-          />
-        </div>
+        {/* URLにorganizationIdがない場合の警告 */}
+        {!organizationId && (
+          <div className="text-red-500 mb-4">
+            URLに`organizationId`を指定してください。
+          </div>
+        )}
 
-        {/* 組織IDを反映してお菓子の一覧を表示するボタン */}
-        <div className="mb-4">
-          <Button onClick={fetchChocolates}>お菓子を表示</Button>
-        </div>
-
-        {/* お菓子一覧をグリッドレイアウトで表示 */}
+        {/* 商品リストをグリッド形式で表示 */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {chocolates.map((chocolate) => (
             <InventryCard
               key={chocolate.product_id}
               name={chocolate.product_name}
               imageSrc={chocolate.product_image_url}
-              isFavorite={favorites.includes(chocolate.product_id)}
-              onToggleFavorite={() => toggleFavorite(chocolate.product_id)}
-              onAddToCart={(quantity) =>
-                addToCart(chocolate.product_id, quantity)
+              isFavorite={favorites.includes(chocolate.product_id)} // お気に入り状態
+              onToggleFavorite={() => toggleFavorite(chocolate.product_id)} // お気に入りの切り替え
+              onAddToCart={
+                (quantity) => addToCart(chocolate.product_id, quantity) // カートに追加
               }
             />
           ))}
         </div>
 
-        {/* カートの内容を表示 */}
+        {/* カート内容を表示 */}
         <div className="mt-8 p-4 bg-muted rounded-lg">
           <h2 className="text-2xl font-bold mb-4 flex items-center">
             <ShoppingCart className="mr-2" />
             カート
           </h2>
-          {/* カート内の商品リストを表示 */}
+
+          {/* カートに入っている商品のリスト */}
           {cart.map((item) => {
-            // カート内の商品の詳細情報を取得します。
             const chocolate = chocolates.find(
               (c) => c.product_id === item.product_id
-            );
+            ); // 商品の詳細情報を取得
             return chocolate ? (
               <div
                 key={item.product_id}
@@ -171,7 +149,7 @@ export default function ChocolateShop() {
                 </span>
                 <Button
                   variant="destructive"
-                  onClick={() => removeFromCart(item.product_id)}
+                  onClick={() => removeFromCart(item.product_id)} // カートから削除
                 >
                   削除
                 </Button>

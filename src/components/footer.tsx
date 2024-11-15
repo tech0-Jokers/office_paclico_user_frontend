@@ -37,7 +37,11 @@ export default function Footer(): JSX.Element {
         {/* アイコン付きボタンを横並びで均等に配置するためにflexレイアウトを使用 */}
 
         {/* ホームボタン */}
-        <IconButton href="/" icon={MessageCircleHeart} label="Message" />
+        <IconButton
+          href="/message_app"
+          icon={MessageCircleHeart}
+          label="Message"
+        />
 
         {/* アルバムボタン */}
         <IconButton href="/shop" icon={ShoppingBasket} label="お菓子の購入" />
