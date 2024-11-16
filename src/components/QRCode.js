@@ -1,28 +1,9 @@
 "use client"; // shadcnのデザインとイベントを動的に動作させる
 
-import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button"; // shadcn-uiのButtonコンポーネント
 
-export default function QRCard({ url, label, onClick }) {
-  const [qrCodeSrc, setQrCodeSrc] = useState("");
-
-  useEffect(() => {
-    const fetchQrCode = async () => {
-      const response = await fetch(
-        `/api/qrcode?url=${encodeURIComponent(url)}`
-      );
-      if (response.ok) {
-        const blob = await response.blob();
-        setQrCodeSrc(URL.createObjectURL(blob));
-      } else {
-        console.error("QRコードの取得に失敗しました");
-      }
-    };
-
-    fetchQrCode();
-  }, [url]);
-
+export default function QRCard({ qrCodeSrc, label, onClick }) {
   return (
     <div className="border rounded-lg p-4 shadow-md text-center bg-white">
       <h2 className="text-lg font-semibold mb-2">{label}</h2>
