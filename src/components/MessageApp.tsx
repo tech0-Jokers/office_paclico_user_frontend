@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import MessageCard from "./MessageCard"; // メッセージカードコンポーネントのインポート
 import MessageDetailsDialog from "./MessageDetailsDialog"; // メッセージ詳細ダイアログのインポート
 import { Message, Reply } from "@/components/types"; // 型定義をインポート
-import SendMessageButton from "@/components/SendMessageButton";
 import SendMessageApp from "@/components/SendMessageApp";
 
 // メインのアプリケーションコンポーネント

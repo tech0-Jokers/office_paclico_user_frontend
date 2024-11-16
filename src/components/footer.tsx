@@ -1,12 +1,7 @@
 "use client"; // このコンポーネントはクライアントサイドで動作します
 
 import { Button } from "@/components/ui/button"; // ボタンコンポーネントをインポート
-import {
-  MessageCircleHeart,
-  Pickaxe,
-  ShoppingBasket,
-  House,
-} from "lucide-react"; // アイコンをインポート
+import { MessageCircleHeart, Pickaxe, House } from "lucide-react"; // アイコンをインポート
 import { useSelectedOrg } from "@/context/SelectedOrgContext"; // コンテキストフックをインポート
 import { useRouter } from "next/navigation"; // Next.jsのルーターを使用
 
