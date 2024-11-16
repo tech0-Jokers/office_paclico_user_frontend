@@ -4,6 +4,7 @@ import MessageCard from "./MessageCard"; // メッセージカードコンポー
 import MessageDetailsDialog from "./MessageDetailsDialog"; // メッセージ詳細ダイアログのインポート
 import { Message, Reply } from "@/components/types"; // 型定義をインポート
 import SendMessageButton from "@/components/SendMessageButton";
+import SendMessageApp from "@/components/SendMessageApp";
 
 // メインのアプリケーションコンポーネント
 export default function MessageApp() {
@@ -37,16 +38,6 @@ export default function MessageApp() {
   useEffect(() => {
     fetchMessages(); // コンポーネントのマウント時にメッセージを取得
   }, []);
-
-  // 新しいメッセージを追加する関数
-  const addMessage = (
-    newMessage: Omit<Message, "id" | "likes" | "replies">
-  ) => {
-    setMessages((prevMessages) => [
-      ...prevMessages,
-      { ...newMessage, id: prevMessages.length + 1, likes: 0, replies: [] },
-    ]);
-  };
 
   // メッセージに「いいね」を追加する関数
   const handleLike = (e: React.MouseEvent, id: number) => {
@@ -86,7 +77,7 @@ export default function MessageApp() {
       {error && <p className="text-red-500">{error}</p>}{" "}
       {/* 新しいメッセージを追加するフォーム */}
       <div className="flex justify-start mb-4">
-        <SendMessageButton />
+        <SendMessageApp />
       </div>
       {/* メッセージ一覧を表示 */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">

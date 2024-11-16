@@ -2,7 +2,7 @@
 import React from "react";
 
 // 新しいメッセージフォームコンポーネントをインポート
-import NewMessageForm from "./NewMessageForm";
+import NewMessageForm from "@/components/NewMessageForm";
 
 // UIライブラリからButtonコンポーネントをインポート
 import { Button } from "@/components/ui/button";
