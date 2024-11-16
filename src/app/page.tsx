@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import QRCard from "@/components/QRCard";
-import ChocolateShop from "@/components/AmbassadorShop";
+import QRCard from "@/components/QRCode";
+import AmbassadorShop from "@/components/AmbassadorShop";
 
 export default function HomePage() {
   const [selectedOrgId, setSelectedOrgId] = useState<string | null>(null);
@@ -19,7 +19,7 @@ export default function HomePage() {
   ];
 
   if (selectedOrgId) {
-    return <ChocolateShop organizationId={Number(selectedOrgId)} />;
+    return <AmbassadorShop organizationId={Number(selectedOrgId)} />;
   }
 
   return (

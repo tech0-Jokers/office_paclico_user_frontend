@@ -6,6 +6,7 @@ import { useEffect, useState } from "react"; // Reactのフック
 import { ShoppingCart } from "lucide-react"; // アイコン
 import { Button } from "@/components/ui/button"; // ボタンコンポーネント
 import { InventryCard } from "@/components/InventryCard"; // 商品カードコンポーネント
+import SendMessageButton from "@/components/SendMessageButton"; // メッセージ送信コンポーネント
 
 // お菓子データの型を定義します。
 type Chocolate = {
@@ -22,7 +23,7 @@ type CartItem = {
 };
 
 // メインのコンポーネント
-export default function ChocolateShop({
+export default function AmbassadorShop({
   organizationId,
 }: {
   organizationId: number;
@@ -102,6 +103,9 @@ export default function ChocolateShop({
         {/* エラーメッセージを表示 */}
         {error && <div className="text-red-500">{error}</div>}
 
+        {/* メッセージ送信フォーム */}
+        <SendMessageButton />
+
         {/* 商品リストをグリッド形式で表示 */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {chocolates.map((chocolate) => (
@@ -138,6 +142,7 @@ export default function ChocolateShop({
                 <span>
                   {chocolate.product_name} x {item.quantity}
                 </span>
+                {/* カートから商品を削除するボタン */}
                 <Button
                   variant="destructive"
                   onClick={() => removeFromCart(item.product_id)} // カートから削除
@@ -148,6 +153,8 @@ export default function ChocolateShop({
             ) : null;
           })}
         </div>
+        {/* カートに入っている商品を購入するボタンで、ボタンを押すとモーダルウィンドウが開く */}
+        <Button variant="default">購入</Button>
       </div>
     </div>
   );

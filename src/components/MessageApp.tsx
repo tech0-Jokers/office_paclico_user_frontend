@@ -1,17 +1,9 @@
 "use client";
 import { useEffect, useState } from "react";
 import MessageCard from "./MessageCard"; // メッセージカードコンポーネントのインポート
-import NewMessageForm from "./NewMessageForm"; // 新しいメッセージフォームのインポート
 import MessageDetailsDialog from "./MessageDetailsDialog"; // メッセージ詳細ダイアログのインポート
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import { Message, Reply } from "@/components/types"; // 型定義をインポート
+import SendMessageButton from "@/components/SendMessageButton";
 
 // メインのアプリケーションコンポーネント
 export default function MessageApp() {
@@ -88,24 +80,13 @@ export default function MessageApp() {
       <h1 className="text-3xl font-bold text-purple-800 mb-8">
         メッセージアプリ
       </h1>
-      {loading && <p>メッセージを取得中です...</p>}{" "}
       {/* ローディングインジケーター */}
-      {error && <p className="text-red-500">{error}</p>}{" "}
+      {loading && <p>メッセージを取得中です...</p>}
       {/* エラーメッセージ表示 */}
+      {error && <p className="text-red-500">{error}</p>}{" "}
+      {/* 新しいメッセージを追加するフォーム */}
       <div className="flex justify-start mb-4">
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button className="bg-purple-600 hover:bg-purple-700 text-white">
-              お菓子とお礼のメッセージを送る
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="bg-white max-h-[80vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>新しいメッセージ</DialogTitle>
-            </DialogHeader>
-            <NewMessageForm onSubmit={addMessage} />
-          </DialogContent>
-        </Dialog>
+        <SendMessageButton />
       </div>
       {/* メッセージ一覧を表示 */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">

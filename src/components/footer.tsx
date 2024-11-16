@@ -1,6 +1,11 @@
 import Link from "next/link"; // ページ間リンクを作成するためのコンポーネントをインポート
 import { Button } from "@/components/ui/button"; // shadcn-uiのButtonコンポーネントをインポート
-import { MessageCircleHeart, Pickaxe, ShoppingBasket } from "lucide-react"; // 各ページで使うアイコンをインポート
+import {
+  MessageCircleHeart,
+  Pickaxe,
+  ShoppingBasket,
+  House,
+} from "lucide-react"; // 各ページで使うアイコンをインポート
 
 // アイコン付きボタンのプロパティ型を定義
 type IconButtonProps = {
@@ -37,6 +42,9 @@ export default function Footer(): JSX.Element {
         {/* アイコン付きボタンを横並びで均等に配置するためにflexレイアウトを使用 */}
 
         {/* ホームボタン */}
+        <IconButton href="/" icon={House} label="ホーム" />
+
+        {/* メッセージボタン */}
         <IconButton
           href="/message_app"
           icon={MessageCircleHeart}
