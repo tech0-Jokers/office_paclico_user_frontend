@@ -17,3 +17,10 @@ export type Reply = {
   from: string;
   content: string;
 };
+
+// チョコレートの型
+export type Chocolate = {
+  Index: number;
+  Product_Name: string;
+  Image_Url: string;
+};

@@ -15,13 +15,7 @@ import {
 import { Textarea } from "@/components/ui/textarea"; // テキストエリアコンポーネントをインポート
 import { predefinedMessages } from "@/components/constants"; // 定義済みメッセージをインポート
 import { Message } from "@/components/types"; // Message型をインポート
-
-// チョコレートの型定義
-interface Chocolate {
-  Index: number;
-  Product_Name: string;
-  Image_Url: string;
-}
+import { Chocolate } from "@/components/types";
 
 // 新しいメッセージを作成するフォームコンポーネント
 export default function NewMessageForm({

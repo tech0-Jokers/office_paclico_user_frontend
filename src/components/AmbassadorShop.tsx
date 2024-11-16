@@ -95,7 +95,7 @@ export default function AmbassadorShop({
   // UIの描画部分
   return (
     <div className="min-h-screen bg-purple-100 p-8">
-      <div className="container mx-auto p-4">
+      <div className="container mx-auto">
         {/* ページタイトル */}
         <h1 className="text-3xl font-bold mb-6">Ambassador Shop</h1>
 

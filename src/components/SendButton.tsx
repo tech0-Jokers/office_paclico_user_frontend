@@ -9,11 +9,12 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import NewMessageForm from "@/components/NewMessageForm"; // 新しいメッセージフォームをインポート
+import { Message } from "@/components/types"; // 型定義をインポート
 
-// 送信ボタンコンポーネントのプロパティ（Props）の型を定義
+// プロパティの型を定義
 interface SendButtonProps {
-  onClick: () => void; // ボタンがクリックされたときに呼ばれる関数
-  addMessage: (newMessage: any) => void; // メッセージを追加する関数（型は適宜変更可能）
+  onClick: () => void;
+  addMessage: (newMessage: Omit<Message, "id" | "likes" | "replies">) => void;
 }
 
 // 送信ボタンコンポーネント
