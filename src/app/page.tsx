@@ -1,11 +1,12 @@
 "use client"; // このコンポーネントはクライアントサイドで動作します
 
+import { useSelectedOrg } from "@/context/SelectedOrgContext"; // コンテキストから状態を取得
 import { useState, useEffect } from "react";
 import QRCodeList from "@/components/QRCodeList"; // QRコード一覧を表示するコンポーネント
 import AmbassadorShop from "@/components/AmbassadorShop"; // ショップ画面のコンポーネント
 
 export default function HomePage() {
-  const [selectedOrgId, setSelectedOrgId] = useState<string | null>(null); // 選択された組織のIDを保持するステート
+  const { selectedOrgId, setSelectedOrgId } = useSelectedOrg(); // コンテキストから状態を取得
   const [qrData, setQrData] = useState([]); // QRコードデータを保持するステート
   const [isLoading, setIsLoading] = useState(true); // ローディング状態
 
@@ -35,8 +36,13 @@ export default function HomePage() {
   if (isLoading) return <div>Loading...</div>;
 
   // 組織が選択された場合はショップ画面を表示
-  if (selectedOrgId)
-    return <AmbassadorShop organizationId={Number(selectedOrgId)} />;
+  if (selectedOrgId) {
+    return (
+      <div className="min-h-screen bg-purple-100 p-8">
+        <AmbassadorShop organizationId={Number(selectedOrgId)} />
+      </div>
+    );
+  }
 
   // QRコード選択画面を表示
   return (
