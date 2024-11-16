@@ -27,10 +27,14 @@ export default function ChocolateShop() {
   const [cart, setCart] = useState<CartItem[]>([]); // カートに追加された商品を管理するステート
   const [favorites, setFavorites] = useState<number[]>([]); // お気に入りリスト
   const [error, setError] = useState<string | null>(null); // エラーメッセージを保持するステート
+  const [organizationId, setOrganizationId] = useState<string | null>(null); // organizationIdを保持するステート
 
   // 現在のページURLからクエリパラメータを取得します。
-  const { searchParams } = new URL(window.location.href); // URLオブジェクトを作成
-  const organizationId = searchParams.get("organizationId"); // URLから"organizationId"を取得
+  useEffect(() => {
+    const { searchParams } = new URL(window.location.href); // URLオブジェクトを作成
+    const orgId = searchParams.get("organizationId"); // URLから"organizationId"を取得
+    setOrganizationId(orgId); // organizationIdをステートにセット
+  }, []); // 初回レンダリング時に実行
 
   // 初回レンダリング時、またはorganizationIdが変更されたときにデータを取得します。
   useEffect(() => {
