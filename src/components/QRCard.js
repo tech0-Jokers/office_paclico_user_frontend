@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button"; // shadcn-uiのButtonコンポーネント
 
-export default function QRCard({ url, label }) {
+export default function QRCard({ url, label, onClick }) {
   const [qrCodeSrc, setQrCodeSrc] = useState("");
 
   useEffect(() => {
@@ -38,12 +38,7 @@ export default function QRCard({ url, label }) {
           <p>QRコードを生成中...</p>
         )}
       </div>
-      <Button
-        className="mt-4 bg-purple-600"
-        onClick={() => {
-          window.location.href = url;
-        }}
-      >
+      <Button className="mt-4 bg-purple-600" onClick={onClick}>
         {label}へ移動
       </Button>
     </div>

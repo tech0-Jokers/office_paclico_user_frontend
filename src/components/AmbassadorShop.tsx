@@ -22,19 +22,15 @@ type CartItem = {
 };
 
 // メインのコンポーネント
-export default function ChocolateShop() {
+export default function ChocolateShop({
+  organizationId,
+}: {
+  organizationId: number;
+}) {
   const [chocolates, setChocolate] = useState<Chocolate[]>([]); // お菓子のデータを保持するステート
   const [cart, setCart] = useState<CartItem[]>([]); // カートに追加された商品を管理するステート
   const [favorites, setFavorites] = useState<number[]>([]); // お気に入りリスト
   const [error, setError] = useState<string | null>(null); // エラーメッセージを保持するステート
-  const [organizationId, setOrganizationId] = useState<string | null>(null); // organizationIdを保持するステート
-
-  // 現在のページURLからクエリパラメータを取得します。
-  useEffect(() => {
-    const { searchParams } = new URL(window.location.href); // URLオブジェクトを作成
-    const orgId = searchParams.get("organizationId"); // URLから"organizationId"を取得
-    setOrganizationId(orgId); // organizationIdをステートにセット
-  }, []); // 初回レンダリング時に実行
 
   // 初回レンダリング時、またはorganizationIdが変更されたときにデータを取得します。
   useEffect(() => {
@@ -44,7 +40,7 @@ export default function ChocolateShop() {
   }, [organizationId]); // organizationIdが変化するたびに再実行
 
   // APIからお菓子データを取得する非同期関数
-  const fetchChocolates = async (organizationId: string) => {
+  const fetchChocolates = async (organizationId: number) => {
     const requestUrl = `/api/products/${organizationId}`; // APIのエンドポイントを作成
     try {
       const response = await fetch(requestUrl); // APIリクエストを送信
@@ -105,13 +101,6 @@ export default function ChocolateShop() {
 
         {/* エラーメッセージを表示 */}
         {error && <div className="text-red-500">{error}</div>}
-
-        {/* URLにorganizationIdがない場合の警告 */}
-        {!organizationId && (
-          <div className="text-red-500 mb-4">
-            URLに`organizationId`を指定してください。
-          </div>
-        )}
 
         {/* 商品リストをグリッド形式で表示 */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

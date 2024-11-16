@@ -1,16 +1,27 @@
+"use client";
+
+import { useState } from "react";
 import QRCard from "@/components/QRCard";
+import ChocolateShop from "@/components/AmbassadorShop";
 
 export default function HomePage() {
+  const [selectedOrgId, setSelectedOrgId] = useState<string | null>(null);
+
   const qrData = [
     {
-      url: "http://localhost:3000/shop?organizationId=1",
+      organizationId: "1",
       label: "Office Suzuyu",
     },
     {
-      url: "http://localhost:3000/shop?organizationId=2",
+      organizationId: "2",
       label: "Office Ryosan",
     },
   ];
+
+  if (selectedOrgId) {
+    return <ChocolateShop organizationId={Number(selectedOrgId)} />;
+  }
+
   return (
     <div className="min-h-screen bg-purple-100 p-8">
       <h1 className="text-3xl font-bold text-purple-800 mb-8">OfficePaclico</h1>
@@ -20,7 +31,12 @@ export default function HomePage() {
         </h1>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {qrData.map((item, index) => (
-            <QRCard key={index} url={item.url} label={item.label} />
+            <QRCard
+              key={index}
+              url="#"
+              label={item.label}
+              onClick={() => setSelectedOrgId(item.organizationId)}
+            />
           ))}
         </div>
       </div>
