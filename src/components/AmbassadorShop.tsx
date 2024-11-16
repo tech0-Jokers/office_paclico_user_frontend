@@ -6,7 +6,6 @@ import { useEffect, useState } from "react"; // Reactのフック
 import { ShoppingCart } from "lucide-react"; // アイコン
 import { Button } from "@/components/ui/button"; // ボタンコンポーネント
 import { InventryCard } from "@/components/InventryCard"; // 商品カードコンポーネント
-import SendMessageButton from "@/components/SendMessageButton"; // メッセージ送信コンポーネント
 
 // お菓子データの型を定義します。
 type Chocolate = {
@@ -102,9 +101,6 @@ export default function AmbassadorShop({
 
         {/* エラーメッセージを表示 */}
         {error && <div className="text-red-500">{error}</div>}
-
-        {/* メッセージ送信フォーム */}
-        <SendMessageButton />
 
         {/* 商品リストをグリッド形式で表示 */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
