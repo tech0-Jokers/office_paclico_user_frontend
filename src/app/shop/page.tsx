@@ -1,3 +1,4 @@
+"use client";
 import AmbassadorShop from "@/components/AmbassadorShop"; // コンポーネントのインポート
 
 export default function HomePage() {
