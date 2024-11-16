@@ -1,4 +1,3 @@
-import MessageAppMain from "@/components/MessageApp"; // コンポーネントのインポート
 import QRCard from "@/components/QRCard";
 
 export default function HomePage() {

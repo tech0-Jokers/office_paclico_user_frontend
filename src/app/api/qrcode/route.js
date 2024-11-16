@@ -23,6 +23,8 @@ export async function GET(request) {
       headers: { "Content-Type": "image/png" },
     });
   } catch (error) {
+    // エラーをログに出力
+    console.error("QRコード生成中にエラーが発生しました:", error);
     return new Response(
       JSON.stringify({ error: "QRコード生成に失敗しました" }),
       {

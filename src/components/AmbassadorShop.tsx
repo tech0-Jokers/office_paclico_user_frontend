@@ -3,7 +3,6 @@
 
 // 必要なモジュールやフックをインポートします。
 import { useEffect, useState } from "react"; // Reactのフック
-import { useRouter } from "next/navigation"; // Next.jsのルーター機能
 import { ShoppingCart } from "lucide-react"; // アイコン
 import { Button } from "@/components/ui/button"; // ボタンコンポーネント
 import { InventryCard } from "@/components/InventryCard"; // 商品カードコンポーネント
@@ -24,7 +23,6 @@ type CartItem = {
 
 // メインのコンポーネント
 export default function ChocolateShop() {
-  const router = useRouter(); // Next.jsのルーター機能を利用
   const [chocolates, setChocolate] = useState<Chocolate[]>([]); // お菓子のデータを保持するステート
   const [cart, setCart] = useState<CartItem[]>([]); // カートに追加された商品を管理するステート
   const [favorites, setFavorites] = useState<number[]>([]); // お気に入りリスト
