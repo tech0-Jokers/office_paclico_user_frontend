@@ -1,5 +1,5 @@
 // 必要なライブラリやコンポーネントをインポート
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -18,33 +18,36 @@ interface SendButtonProps {
 }
 
 // 送信ボタンコンポーネント
-const SendButton: React.FC<SendButtonProps> = ({ onClick, addMessage }) => (
-  <div className="flex justify-start mb-4">
-    {/* モーダルダイアログを作成 */}
-    <Dialog>
-      {/* ダイアログを開くためのトリガーボタン */}
-      <DialogTrigger asChild>
-        <Button
-          onClick={onClick}
-          className="bg-purple-600 hover:bg-purple-700 text-white"
-        >
-          お菓子とお礼のメッセージを送る
-        </Button>
-      </DialogTrigger>
+const SendButton: React.FC<SendButtonProps> = ({ onClick, addMessage }) => {
+  const [isOpen, setIsOpen] = useState(false);
 
-      {/* ダイアログの中身 */}
-      <DialogContent className="bg-white max-h-[80vh] overflow-y-auto">
-        {/* ダイアログのヘッダー */}
-        <DialogHeader>
-          <DialogTitle>新しいメッセージ</DialogTitle>
-        </DialogHeader>
+  const handleOpen = () => setIsOpen(true);
+  const handleClose = () => setIsOpen(false);
 
-        {/* 新しいメッセージフォーム */}
-        <NewMessageForm onSubmit={addMessage} />
-      </DialogContent>
-    </Dialog>
-  </div>
-);
+  return (
+    <div className="flex justify-start mb-4">
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogTrigger asChild>
+          <Button
+            onClick={() => {
+              onClick();
+              handleOpen();
+            }}
+            className="bg-purple-600 hover:bg-purple-700 text-white"
+          >
+            お菓子とお礼のメッセージを送る
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="bg-white max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>新しいメッセージ</DialogTitle>
+          </DialogHeader>
+          <NewMessageForm onSubmit={addMessage} onClose={handleClose} />
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+};
 
 // このコンポーネントをエクスポートして他のファイルで使えるようにする
 export default SendButton;

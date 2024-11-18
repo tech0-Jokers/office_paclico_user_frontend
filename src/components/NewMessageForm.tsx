@@ -17,11 +17,18 @@ import { predefinedMessages } from "@/components/constants"; // 定義済みメ�
 import { Message } from "@/components/types"; // Message型をインポート
 import { Products } from "@/components/types";
 
+// コンポーネントにpropsを追加
+interface NewMessageFormProps {
+  onClose: () => void;
+}
+
 // 新しいメッセージを作成するフォームコンポーネント
 export default function NewMessageForm({
   onSubmit,
+  onClose,
 }: {
   onSubmit: (message: Omit<Message, "id" | "likes" | "replies">) => void; // メッセージ送信時のコールバック
+  onClose: () => void;
 }) {
   // 各フィールドの入力値を管理する状態変数
   const [to, setTo] = useState(""); // 送信先
@@ -41,19 +48,29 @@ export default function NewMessageForm({
   // コンポーネントのマウント時にデータを取得します。
   useEffect(() => {
     if (organizationId) {
-      fetchChocolates(organizationId); // データ取得関数を呼び出す
+      fetchProducts(organizationId); // データ取得関数を呼び出す
     }
   }, [organizationId]); // organizationIdが変化するたびに再実行
 
   // APIからお菓子データを取得する非同期関数
-  const fetchChocolates = async (organizationId: number) => {
+  const fetchProducts = async (organizationId: number) => {
     const requestUrl = `/api/products/${organizationId}`; // APIのエンドポイントを作成
     try {
       const response = await fetch(requestUrl); // APIリクエストを送信
 
       // レスポンスがエラーの場合は例外をスロー
       if (!response.ok) {
-        throw new Error(`お菓子データの取得に失敗しました: ${response.status}`);
+        if (response.status === 404) {
+          throw new Error(
+            "指定された組織のお菓子データが見つかりませんでした。"
+          );
+        } else if (response.status === 403) {
+          throw new Error("データへのアクセス権限がありません。");
+        } else {
+          throw new Error(
+            `お菓子データの取得に失敗しました: ${response.status}`
+          );
+        }
       }
 
       const data = await response.json(); // レスポンスデータをJSON形式で取得
@@ -77,19 +94,32 @@ export default function NewMessageForm({
   // フォーム送信時の処理
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault(); // デフォルトのフォーム送信を防ぐ
-    onSubmit({ to, from, message, treat, imageUrl }); // 親コンポーネントにメッセージ内容を送信
-    // フォーム内容をリセット
-    setTo("");
-    setFrom("");
-    setMessage(messageInputType === "select" ? predefinedMessages[0] : "");
-    setTreat("");
-    setImageUrl("");
-    setMessageInputType("select");
+    try {
+      onSubmit({ to, from, message, treat, imageUrl }); // 親コンポーネントにメッセージ内容を送信
+      // フォーム内容をリセット
+      setTo("");
+      setFrom("");
+      setMessage(messageInputType === "select" ? predefinedMessages[0] : "");
+      setTreat("");
+      setImageUrl("");
+      setMessageInputType("select");
+
+      // 送信成功時にモーダルを閉じる
+      onClose();
+    } catch (error) {
+      // エラー処理
+      console.error("送信エラー:", error);
+      setError(error instanceof Error ? error.message : "送信に失敗しました");
+    }
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       {/* お菓子の種類選択 */}
+      <div>
+        {error && <div className="error-message text-red-600 p-2">{error}</div>}
+        {/* 既存のフォーム要素 */}
+      </div>
       <div>
         <Label htmlFor="treat">お菓子</Label>
         <Select value={treat} onValueChange={handleTreatChange} required>
