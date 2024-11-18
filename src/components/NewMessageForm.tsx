@@ -17,11 +17,6 @@ import { predefinedMessages } from "@/components/constants"; // 定義済みメ�
 import { Message } from "@/components/types"; // Message型をインポート
 import { Products } from "@/components/types";
 
-// コンポーネントにpropsを追加
-interface NewMessageFormProps {
-  onClose: () => void;
-}
-
 // 新しいメッセージを作成するフォームコンポーネント
 export default function NewMessageForm({
   onSubmit,
