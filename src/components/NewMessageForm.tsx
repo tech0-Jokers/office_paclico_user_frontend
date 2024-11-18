@@ -50,6 +50,7 @@ export default function NewMessageForm({
   // APIからお菓子データを取得する非同期関数
   const fetchProducts = async (organizationId: number) => {
     const requestUrl = `/api/products/${organizationId}`; // APIのエンドポイントを作成
+
     try {
       const response = await fetch(requestUrl); // APIリクエストを送信
 

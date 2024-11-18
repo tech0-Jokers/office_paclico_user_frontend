@@ -1,15 +1,13 @@
 // types.tsの中に、型定義を記述する
 // メッセージの型
-export type Message = {
-  id: number;
-  to: string;
-  from: string;
-  message: string;
-  treat: string;
-  likes: number;
-  replies: Reply[];
-  imageUrl: string;
-};
+export interface Message {
+  message_id: number; // プロパティ名を修正
+  sender_user_id: number;
+  receiver_user_id: number;
+  message_content: string;
+  product_id: number;
+  send_date: string | null;
+}
 
 // 返信の型
 export type Reply = {
