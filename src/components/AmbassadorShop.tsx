@@ -27,7 +27,7 @@ export default function AmbassadorShop({
 }: {
   organizationId: number;
 }) {
-  const [chocolates, setChocolate] = useState<Chocolate[]>([]); // お菓子のデータを保持するステート
+  const [chocolates, setChocolates] = useState<Chocolate[]>([]); // お菓子のデータを保持するステート
   const [cart, setCart] = useState<CartItem[]>([]); // カートに追加された商品を管理するステート
   const [favorites, setFavorites] = useState<number[]>([]); // お気に入りリスト
   const [error, setError] = useState<string | null>(null); // エラーメッセージを保持するステート
@@ -51,7 +51,7 @@ export default function AmbassadorShop({
       }
 
       const data = await response.json(); // レスポンスデータをJSON形式で取得
-      setChocolate(data); // 取得したデータをステートにセット
+      setChocolates(data); // 取得したデータをステートにセット
       setError(null); // エラーメッセージをクリア
     } catch (error) {
       console.error("データ取得中にエラー:", error); // コンソールにエラーを表示

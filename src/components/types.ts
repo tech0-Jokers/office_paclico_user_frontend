@@ -24,3 +24,12 @@ export type Chocolate = {
   Product_Name: string;
   Image_Url: string;
 };
+
+// 入庫アイテムの型
+export type Products = {
+  product_id: number;
+  product_name: string;
+  product_image_url: string;
+  sales_amount: number;
+  stock_quantity: number;
+};

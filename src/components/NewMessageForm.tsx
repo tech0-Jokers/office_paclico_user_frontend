@@ -15,7 +15,7 @@ import {
 import { Textarea } from "@/components/ui/textarea"; // テキストエリアコンポーネントをインポート
 import { predefinedMessages } from "@/components/constants"; // 定義済みメッセージをインポート
 import { Message } from "@/components/types"; // Message型をインポート
-import { Chocolate } from "@/components/types";
+import { Products } from "@/components/types";
 
 // 新しいメッセージを作成するフォームコンポーネント
 export default function NewMessageForm({
@@ -32,26 +32,46 @@ export default function NewMessageForm({
   const [messageInputType, setMessageInputType] = useState<"select" | "custom">(
     "select"
   ); // メッセージ入力方法の選択
-  const [chocolates, setChocolates] = useState<Chocolate[]>([]); // チョコレートのデータを格納する状態変数
+  const [products, setProducts] = useState<Products[]>([]); // チョコレートのデータを格納する状態変数
+  const [error, setError] = useState<string | null>(null); // エラーメッセージを保持するステート
 
-  // コンポーネントのマウント時にチョコレートデータを取得
+  // 組織IDを定義します（仮に1を設定しています。実際の値に置き換えてください）
+  const organizationId = 1;
+
+  // コンポーネントのマウント時にデータを取得します。
   useEffect(() => {
-    const fetchChocolates = async () => {
-      const response = await fetch("/api/chocolate"); // APIからデータを取得
-      const data = await response.json(); // JSON形式にパース
-      setChocolates(data.chocolates); // 状態を更新
-    };
+    if (organizationId) {
+      fetchChocolates(organizationId); // データ取得関数を呼び出す
+    }
+  }, [organizationId]); // organizationIdが変化するたびに再実行
 
-    fetchChocolates(); // データ取得関数を呼び出し
-  }, []);
+  // APIからお菓子データを取得する非同期関数
+  const fetchChocolates = async (organizationId: number) => {
+    const requestUrl = `/api/products/${organizationId}`; // APIのエンドポイントを作成
+    try {
+      const response = await fetch(requestUrl); // APIリクエストを送信
+
+      // レスポンスがエラーの場合は例外をスロー
+      if (!response.ok) {
+        throw new Error(`お菓子データの取得に失敗しました: ${response.status}`);
+      }
+
+      const data = await response.json(); // レスポンスデータをJSON形式で取得
+      setProducts(data); // 取得したデータをステートにセット
+      setError(null); // エラーメッセージをクリア
+    } catch (error) {
+      console.error("データ取得中にエラー:", error); // コンソールにエラーを表示
+      setError("データの取得に失敗しました。後でもう一度試してください。"); // ユーザーにエラーメッセージを表示
+    }
+  };
 
   // お菓子選択時の処理
   const handleTreatChange = (value: string) => {
     setTreat(value); // お菓子を選択
-    const selectedChocolate = chocolates.find(
-      (choco) => choco.Product_Name === value
+    const selectedProduct = products.find(
+      (products) => products.product_name === value
     );
-    setImageUrl(selectedChocolate ? selectedChocolate.Image_Url : ""); // 選択したお菓子の画像URLをセット
+    setImageUrl(selectedProduct ? selectedProduct.product_image_url : ""); // 選択したお菓子の画像URLをセット
   };
 
   // フォーム送信時の処理
@@ -77,9 +97,12 @@ export default function NewMessageForm({
             <SelectValue placeholder="お菓子を選択" />
           </SelectTrigger>
           <SelectContent>
-            {chocolates.map((chocolate) => (
-              <SelectItem key={chocolate.Index} value={chocolate.Product_Name}>
-                {chocolate.Product_Name}
+            {products.map((products) => (
+              <SelectItem
+                key={products.product_id}
+                value={products.product_id.toString()}
+              >
+                {products.product_name}
               </SelectItem>
             ))}
           </SelectContent>
