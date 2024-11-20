@@ -1,43 +1,10 @@
 "use client"; // クライアントサイドでレンダリングすることを指定
 
 import { useEffect, useState } from "react";
-import Image from "next/image"; // Next.jsの画像コンポーネントをインポート
 import MessageDetailsDialog from "./MessageDetailsDialog"; // メッセージ詳細を表示するダイアログ
 import SendMessageApp from "@/components/SendMessageApp"; // メッセージ送信フォーム
+import MessageCard from "@/components/MessageCard";
 import { Message, Reply } from "@/components/types"; // 型定義をインポート
-
-// メッセージリストを表示するカードコンポーネント
-const MessageCard = ({
-  message,
-  onSelect,
-  onLike,
-}: {
-  message: Message;
-  onSelect: (message: Message) => void;
-  onLike: (e: React.MouseEvent, id: number) => void;
-}) => {
-  return (
-    <div
-      className="card border p-4 shadow-md"
-      onClick={() => onSelect(message)} // カードクリック時に詳細ダイアログを開く
-    >
-      <h2 className="font-bold text-lg">{message.content}</h2>
-      {/* 画像が存在する場合に表示、なければプレースホルダーを表示 */}
-      <Image
-        src={message.imageUrl || "/placeholder.png"} // デフォルトの画像を設定
-        alt="Message Image"
-        width={100}
-        height={100}
-      />
-      <button
-        className="mt-2 text-blue-500"
-        onClick={(e) => onLike(e, message.id)} // 「いいね」ボタンのクリックイベント
-      >
-        いいね ({message.likes})
-      </button>
-    </div>
-  );
-};
 
 // メインのアプリコンポーネント
 export default function MessageApp() {
@@ -54,7 +21,10 @@ export default function MessageApp() {
     const requestUrl = `/api/messages/${organizationId}`; // APIのエンドポイントを設定
 
     try {
-      const response = await fetch(requestUrl); // サーバーにリクエストを送信
+      const response = await fetch(requestUrl, {
+        method: "GET",
+        cache: "no-store", // キャッシュ無効化
+      }); // サーバーにリクエストを送信
 
       if (!response.ok) {
         // レスポンスがエラーの場合、エラーメッセージを投げる
@@ -62,15 +32,18 @@ export default function MessageApp() {
       }
 
       const data = await response.json(); // サーバーからのデータを取得
+      console.log(data); // 取得したデータをコンソールに表示
 
       // サーバーのデータをフロントエンド用の形式に変換
       const mappedMessages = data.messages.map((msg: any) => ({
-        id: msg.message_id,
-        content: msg.message_content,
-        senderId: msg.sender_user_id,
-        receiverId: msg.receiver_user_id,
-        productId: msg.product_id,
-        date: msg.send_date ? new Date(msg.send_date) : null,
+        message_id: msg.message_id,
+        message_content: msg.message_content,
+        sender_user_id: msg.sender_user_id,
+        receiver_user_id: msg.receiver_user_id,
+        sender_user_name: msg.sender_user_name,
+        receiver_user_name: msg.receiver_user_name,
+        product_id: msg.product_id,
+        send_date: msg.send_date ? new Date(msg.send_date) : null,
         likes: 0, // 初期値として「いいね」を0に設定
         replies: [], // 初期値として返信リストを空に設定
         imageUrl: msg.image_url || null, // APIに画像URLが含まれると仮定
@@ -97,7 +70,7 @@ export default function MessageApp() {
     e.stopPropagation(); // 親要素のクリックイベントを止める
     setMessages((prevMessages) =>
       prevMessages.map((msg) =>
-        msg.id === id ? { ...msg, likes: msg.likes + 1 } : msg
+        msg.message_id === id ? { ...msg, likes: msg.likes + 1 } : msg
       )
     ); // 該当するメッセージの「いいね」数を増加
   };
@@ -133,7 +106,7 @@ export default function MessageApp() {
   const addReply = (messageId: number, reply: Omit<Reply, "id">) => {
     setMessages((prevMessages) =>
       prevMessages.map((msg) =>
-        msg.id === messageId
+        msg.message_id === messageId
           ? {
               ...msg,
               replies: [
@@ -168,7 +141,7 @@ export default function MessageApp() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
         {messages.map((message) => (
           <MessageCard
-            key={message.id} // 各メッセージに一意のキーを設定
+            key={message.message_id} // 各メッセージに一意のキーを設定
             message={message}
             onSelect={setSelectedMessage}
             onLike={handleLike}
@@ -181,7 +154,7 @@ export default function MessageApp() {
         <MessageDetailsDialog
           message={selectedMessage}
           onClose={() => setSelectedMessage(null)}
-          onReply={(reply) => addReply(selectedMessage.id, reply)}
+          onReply={(reply) => addReply(selectedMessage.message_id, reply)}
         />
       )}
     </div>

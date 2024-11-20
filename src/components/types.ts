@@ -7,6 +7,11 @@ export interface Message {
   message_content: string;
   product_id: number;
   send_date: string | null;
+  sender_user_name: string;
+  receiver_user_name: string;
+  imageUrl: string | null;
+  likes: number;
+  replies: Reply[];
 }
 
 // 返信の型

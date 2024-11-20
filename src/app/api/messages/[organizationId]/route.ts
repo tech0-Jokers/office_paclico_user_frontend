@@ -4,9 +4,8 @@ import { NextResponse } from "next/server"; // Next.jsのレスポンスオブ�
 
 // GETリクエストを処理する関数をエクスポートします。
 // `request`はリクエストオブジェクト、`params`はURLパラメータを含みます。
-import { NextRequest } from "next/server"; // Next.jsのリクエストオブジェクトをインポート
 
-export async function GET(request, { params }) {
+export async function GET({ params }: { params: { organizationId: string } }) {
   // URLパラメータから組織IDを取得します。
   const { organizationId } = params;
 
@@ -37,9 +36,8 @@ export async function GET(request, { params }) {
   try {
     // 外部APIに対してデータ取得のリクエストを送信します。
     const response = await fetch(requestUrl);
-    console.log("Response status:", response.status); // デバッグ用にレスポンスステータスをログ出力
     const responseData = await response.text();
-    console.log("Response data:", responseData); // デバッグ用にレスポンスデータをログ出力
+    console.log("Response textdata:", responseData); // デバッグ用にレスポンスデータをログ出力
 
     // レスポンスが正常でない場合はエラーをスローします。
     if (!response.ok) {
