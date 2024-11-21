@@ -5,6 +5,11 @@ import MessageDetailsDialog from "./MessageDetailsDialog"; // メッセージ詳
 import SendMessageApp from "@/components/SendMessageApp"; // メッセージ送信フォーム
 import MessageCard from "@/components/MessageCard";
 import { Message, Reply } from "@/components/types"; // 型定義をインポート
+import fetchMessagesData from "@/components/fetchMessagesData"; // fetchDataをインポート
+
+interface PageProps {
+  params: { organizationId: string };
+}
 
 // メインのアプリコンポーネント
 export default function MessageApp() {
@@ -13,29 +18,19 @@ export default function MessageApp() {
   const [error, setError] = useState<string | null>(null); // エラーを管理
   const [loading, setLoading] = useState<boolean>(false); // ローディング状態を管理
 
-  const organizationId = 1; // 仮の組織ID（実際のアプリでは動的に変更）
+  const organizationId = 2; // 仮の組織ID（実際のアプリでは動的に変更）
 
   // サーバーからメッセージを取得する関数
   const fetchMessages = async () => {
     setLoading(true); // データ取得中の状態にする
-    const requestUrl = `/api/messages/${organizationId}`; // APIのエンドポイントを設定
+    setError(null); // エラーをリセット
 
     try {
-      const response = await fetch(requestUrl, {
-        method: "GET",
-        cache: "no-store", // キャッシュ無効化
-      }); // サーバーにリクエストを送信
-
-      if (!response.ok) {
-        // レスポンスがエラーの場合、エラーメッセージを投げる
-        throw new Error("メッセージの取得に失敗しました");
-      }
-
-      const data = await response.json(); // サーバーからのデータを取得
-      console.log(data); // 取得したデータをコンソールに表示
+      // データをサーバーサイドで取得
+      const data = await fetchMessagesData(organizationId);
 
       // サーバーのデータをフロントエンド用の形式に変換
-      const mappedMessages = data.messages.map((msg: any) => ({
+      const mappedMessages = data.map((msg: any) => ({
         message_id: msg.message_id,
         message_content: msg.message_content,
         sender_user_id: msg.sender_user_id,
@@ -43,7 +38,7 @@ export default function MessageApp() {
         sender_user_name: msg.sender_user_name,
         receiver_user_name: msg.receiver_user_name,
         product_id: msg.product_id,
-        send_date: msg.send_date ? new Date(msg.send_date) : null,
+        send_date: msg.send_date ? new Date(msg.send_date).toISOString() : null, // Dateをstringに変換
         likes: 0, // 初期値として「いいね」を0に設定
         replies: [], // 初期値として返信リストを空に設定
         imageUrl: msg.image_url || null, // APIに画像URLが含まれると仮定
@@ -56,7 +51,7 @@ export default function MessageApp() {
         error instanceof Error ? error.message : "不明なエラーが発生しました"
       );
     } finally {
-      setLoading(false); // ローディングを終了
+      setLoading(false); // データ取得完了
     }
   };
 

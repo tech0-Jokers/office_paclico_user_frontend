@@ -20,9 +20,7 @@ export default function MessageCard({
       className="bg-white cursor-pointer hover:shadow-lg transition-shadow"
       onClick={() => onSelect(message)}
     >
-      <pre className="text-xs text-gray-500 whitespace-pre-wrap">
-        {JSON.stringify(message, null, 2)}
-      </pre>
+      <pre className="text-xs text-gray-500 whitespace-pre-wrap"></pre>
       <CardContent className="p-4">
         <div className="aspect-video relative mb-2">
           <Image

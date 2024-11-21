@@ -5,7 +5,10 @@ import { NextResponse } from "next/server"; // Next.jsのレスポンスオブ�
 // GETリクエストを処理する関数をエクスポートします。
 // `request`はリクエストオブジェクト、`params`はURLパラメータを含みます。
 
-export async function GET({ params }: { params: { organizationId: string } }) {
+export async function GET(
+  request: Request,
+  { params }: { params: { organizationId: string } }
+) {
   // URLパラメータから組織IDを取得します。
   const { organizationId } = params;
 

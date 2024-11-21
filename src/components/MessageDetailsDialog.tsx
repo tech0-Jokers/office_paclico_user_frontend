@@ -69,16 +69,16 @@ export default function MessageDetailsDialog({
           {selectedMessage && ( // 選択されたメッセージが存在する場合
             <>
               <p>
-                <span className="font-semibold">To:</span> {selectedMessage.to}{" "}
-                {/* 受取人の表示 */}
+                <span className="font-semibold">To:</span>{" "}
+                {selectedMessage.receiver_user_name} {/* 受取人の表示 */}
               </p>
               <p>
                 <span className="font-semibold">From:</span>{" "}
-                {selectedMessage.from} {/* 送信者の表示 */}
+                {selectedMessage.sender_user_name} {/* 送信者の表示 */}
               </p>
               <p>
                 <span className="font-semibold">メッセージ:</span>{" "}
-                {selectedMessage.message} {/* メッセージ内容の表示 */}
+                {selectedMessage.message_content} {/* メッセージ内容の表示 */}
               </p>
 
               <div className="mt-4">
@@ -98,7 +98,9 @@ export default function MessageDetailsDialog({
 
               {/* ReplyFormコンポーネントを使用して新しい返信を追加します */}
               <ReplyForm
-                onSubmit={(reply) => addReply(selectedMessage.id, reply)} // IDを直接渡す
+                onSubmit={(reply) =>
+                  addReply(selectedMessage.message_id, reply)
+                } // IDを直接渡す
               />
             </>
           )}
