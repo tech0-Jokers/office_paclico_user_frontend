@@ -38,10 +38,11 @@ export default function MessageApp() {
         sender_user_name: msg.sender_user_name,
         receiver_user_name: msg.receiver_user_name,
         product_id: msg.product_id,
+        product_name: msg.product_name,
         send_date: msg.send_date ? new Date(msg.send_date).toISOString() : null, // Dateをstringに変換
         likes: 0, // 初期値として「いいね」を0に設定
         replies: [], // 初期値として返信リストを空に設定
-        imageUrl: msg.image_url || null, // APIに画像URLが含まれると仮定
+        imageUrl: msg.product_image_url || null, // APIに画像URLが含まれると仮定
       }));
 
       setMessages(mappedMessages); // メッセージを状態に保存

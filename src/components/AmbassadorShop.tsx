@@ -92,6 +92,38 @@ export default function AmbassadorShop({
     );
   };
 
+  // カートの商品を購入する関数
+  const purchase = async (organizationId: number) => {
+    const requestUrl = `/api/purchase/`; // APIのエンドポイントを作成
+
+    // 購入データを作成
+    const purchaseData = {
+      organization_id: organizationId,
+      purchases: cart.map((item) => ({
+        product_id: item.product_id,
+        purchase_quantity: item.quantity,
+      })),
+    };
+
+    try {
+      const response = await fetch(requestUrl, {
+        // APIリクエストを送信
+        method: "POST", // POSTリクエストを送信
+        headers: { "Content-Type": "application/json" }, // JSON形式でデータを送信
+        body: JSON.stringify(purchaseData), // 購入データをJSON形式で送信
+      });
+
+      if (!response.ok) {
+        throw new Error(`購入処理に失敗しました: ${response.status}`);
+      }
+
+      setCart([]); // カートを空にする
+    } catch (error) {
+      console.error("購入処理中にエラー:", error);
+      setError("購入処理に失敗しました。後でもう一度試してください。");
+    }
+  };
+
   // UIの描画部分
   return (
     <div className="min-h-screen bg-purple-100 p-8">
@@ -150,7 +182,9 @@ export default function AmbassadorShop({
           })}
         </div>
         {/* カートに入っている商品を購入するボタンで、ボタンを押すとモーダルウィンドウが開く */}
-        <Button variant="default">購入</Button>
+        <Button variant="default" onClick={() => purchase(organizationId)}>
+          購入
+        </Button>
       </div>
     </div>
   );

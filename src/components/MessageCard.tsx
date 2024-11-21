@@ -31,6 +31,8 @@ export default function MessageCard({
             priority
           />
         </div>
+        <p className="text-purple-600">ImageURL: {message.imageUrl}</p>
+        <p className="text-purple-600">Name: {message.product_name}</p>
         <p className="font-semibold text-purple-700">
           To: {message.receiver_user_name}
         </p>

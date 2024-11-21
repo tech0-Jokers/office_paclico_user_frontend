@@ -6,6 +6,7 @@ export interface Message {
   receiver_user_id: number;
   message_content: string;
   product_id: number;
+  product_name: string;
   send_date: string | null;
   sender_user_name: string;
   receiver_user_name: string;
