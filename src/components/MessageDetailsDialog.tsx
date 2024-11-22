@@ -6,7 +6,7 @@ import {
   DialogTitle, // DialogTitleをインポート
   DialogDescription, // DialogDescriptionをインポート
 } from "@/components/ui/dialog"; // Dialogコンポーネント群をインポート
-import ReplyForm from "./ReplyForm"; // 返信フォームコンポーネントをインポート
+import ReplyForm from "@/components/ReplyForm"; // 返信フォームコンポーネントをインポート
 import { useState } from "react"; // ReactのuseStateフックをインポート
 import { Message, Reply } from "@/components/types"; // 型定義をインポート
 
@@ -26,7 +26,11 @@ export default function MessageDetailsDialog({
   );
 
   // 返信を追加する関数
-  const addReply = (messageId: number, replyContent: Omit<Reply, "id">) => {
+  const addReply = (
+    messageId: number,
+    useName: string,
+    replyContent: Omit<Reply, "id">
+  ) => {
     const newReply: Reply = {
       id: Date.now(), // 数値型のIDを生成（UUIDなどを検討すること）
       ...replyContent, // 返信内容を展開
@@ -83,15 +87,15 @@ export default function MessageDetailsDialog({
 
               <div className="mt-4">
                 <h3 className="font-semibold mb-2">返信</h3>
-                {selectedMessage.replies.map((reply) => (
+                {selectedMessage.reply_comments.map((reply) => (
                   <div
-                    key={reply.id}
+                    key={reply.reply_comment_id}
                     className="bg-purple-50 p-2 rounded-md mb-2" // スタイルを適用
                   >
                     <p className="font-semibold text-sm text-purple-700">
-                      {reply.from}:
+                      {reply.comment_user_id}:{reply.comment_user_name}:
+                      {reply.message_content}:{reply.send_date?.toString()}
                     </p>
-                    <p className="text-purple-800">{reply.content}</p>
                   </div>
                 ))}
               </div>
@@ -99,8 +103,14 @@ export default function MessageDetailsDialog({
               {/* ReplyFormコンポーネントを使用して新しい返信を追加します */}
               <ReplyForm
                 onSubmit={(reply) =>
-                  addReply(selectedMessage.message_id, reply)
-                } // IDを直接渡す
+                  addReply(
+                    selectedMessage.message_id,
+                    selectedMessage.sender_user_name, // 送信者の名前を渡す
+                    reply
+                  )
+                } // 送信者の名前を渡す
+                selectedUserName={selectedMessage.sender_user_name} // 送信者の名前を渡す
+                userNames={["Alice", "Bob", "Charlie"]} // ユーザー名のリストを渡す
               />
             </>
           )}

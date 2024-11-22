@@ -1,15 +1,11 @@
 "use client"; // クライアントサイドでレンダリングすることを指定
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import MessageDetailsDialog from "./MessageDetailsDialog"; // メッセージ詳細を表示するダイアログ
 import SendMessageApp from "@/components/SendMessageApp"; // メッセージ送信フォーム
 import MessageCard from "@/components/MessageCard";
 import { Message, Reply } from "@/components/types"; // 型定義をインポート
 import fetchMessagesData from "@/components/fetchMessagesData"; // fetchDataをインポート
-
-interface PageProps {
-  params: { organizationId: string };
-}
 
 // メインのアプリコンポーネント
 export default function MessageApp() {
@@ -20,7 +16,7 @@ export default function MessageApp() {
   const [organizationId, setOrganizationId] = useState<number>(1); // 組織IDを管理
 
   // サーバーからメッセージを取得する関数
-  const fetchMessages = async () => {
+  const fetchMessages = useCallback(async () => {
     setLoading(true); // データ取得中の状態にする
     setError(null); // エラーをリセット
 
@@ -45,9 +41,12 @@ export default function MessageApp() {
         reply_comments: (msg.reply_comments || []).map((reply: any) => ({
           reply_comment_id: reply.reply_comment_id,
           comment_user_id: reply.comment_user_id,
+          comment_user_name: reply.comment_user_name,
           message_content: reply.message_content,
           send_date: reply.send_date
-            ? new Date(reply.send_date).toISOString()
+            ? new Date(reply.send_date).toLocaleString("ja-JP", {
+                timeZone: "Asia/Tokyo",
+              })
             : null, // Dateをstringに変換
         })),
       }));
@@ -61,7 +60,7 @@ export default function MessageApp() {
     } finally {
       setLoading(false); // データ取得完了
     }
-  };
+  }, [organizationId]);
 
   // 初回レンダリング時にメッセージを取得
   // organizationIdが変更されたときにメッセージを再取得

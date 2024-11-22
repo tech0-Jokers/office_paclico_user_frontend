@@ -2,6 +2,7 @@
 interface ReplyComment {
   reply_comment_id: number; // リプライコメントのID
   comment_user_id: number; // コメントしたユーザーのID
+  comment_user_name: string; // コメントしたユーザーの名前
   message_content: string; // コメントの内容
   send_date: Date | null; // コメント送信日時（nullの場合もあり）
 }
@@ -70,6 +71,7 @@ const fetchMessagesData = async (
             // リプライコメントを加工
             reply_comment_id: reply.reply_comment_id, // リプライID
             comment_user_id: reply.comment_user_id, // コメントしたユーザーのID
+            comment_user_name: reply.comment_user_name, // コメントしたユーザーの名前
             message_content: reply.message_content, // コメント内容
             send_date: reply.send_date ? new Date(reply.send_date) : null, // コメント送信日時
           })

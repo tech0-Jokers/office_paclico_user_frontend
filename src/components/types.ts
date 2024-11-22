@@ -19,6 +19,7 @@ export interface Message {
 interface ReplyComment {
   reply_comment_id: number; // リプライコメントのID
   comment_user_id: number; // コメントしたユーザーのID
+  comment_user_name: string; // コメントしたユーザーの名前
   message_content: string; // コメントの内容
   send_date: Date | null; // コメント送信日時（nullの場合もあり）
 }

@@ -21,6 +21,11 @@ export default function MessageCard({
       onClick={() => onSelect(message)}
     >
       <CardContent className="p-4">
+        <p className="font-semibold text-purple-700">
+          To: {message.receiver_user_name}
+        </p>
+        <p className="text-purple-600">From: {message.sender_user_name}</p>
+        <p className="text-purple-800 mt-2">{message.message_content}</p>
         <div className="aspect-video relative mb-2">
           <Image
             src={message.product_image_url || "/placeholder.png"}
@@ -30,17 +35,8 @@ export default function MessageCard({
             priority
           />
         </div>
-        <div className="text-purple-600">
-          {message.reply_comments.map((comment, index) => (
-            <p key={index}>Comment: {comment.message_content}</p>
-          ))}
-        </div>
         <p className="text-purple-600">Name: {message.product_name}</p>
-        <p className="font-semibold text-purple-700">
-          To: {message.receiver_user_name}
-        </p>
-        <p className="text-purple-600">From: {message.sender_user_name}</p>
-        <p className="text-purple-800 mt-2">{message.message_content}</p>
+
         <div className="mt-2 flex items-center justify-between">
           <Button
             size="sm"
