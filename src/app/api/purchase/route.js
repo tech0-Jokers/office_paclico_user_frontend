@@ -8,42 +8,46 @@ import { NextResponse } from "next/server";
 // requestのbodyを取得するには、`await request.json()`を使用します。
 
 export async function PUT(request) {
-  // URLパラメータから組織IDを取得します。
-  // requestのbodyを取得するには、`await request.json()`を使用します。
-
-  // 環境変数から外部APIのベースURLを取得します。
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
-  // APIのURLが設定されていない場合はエラーレスポンスを返します。
-  if (!apiUrl) {
-    return NextResponse.json(
-      { error: "API URLが設定されていません。環境変数を確認してください。" },
-      { status: 500 }
-    );
-  }
-
-  // 外部APIにリクエストを送るための完全なURLを作成します。
-  const requestUrl = `${apiUrl}/inventory_products/purchase/`;
-
   try {
-    // 外部APIに対してデータ取得のリクエストを送信します。
-    const response = await fetch(requestUrl, {
+    // リクエストボディを取得
+    const requestBody = await request.json(); // 修正ポイント
+    console.log("受信したリクエストボディ:", requestBody);
+
+    if (!requestBody.organization_id || !Array.isArray(requestBody.purchases)) {
+      console.error("リクエストデータ形式が不正です:", requestBody);
+      return NextResponse.json(
+        { error: "リクエストデータ形式が不正です。" },
+        { status: 400 }
+      );
+    }
+
+    const response = await fetch(`${apiUrl}/inventory_products/purchase/`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        "Cache-Control": "no-cache", // キャッシュを無効化
       },
-      body: JSON.stringify(await request.json()),
-      cache: "no-cache ", // キャッシュを無効化
+      body: JSON.stringify(requestBody),
+      cache: "no-cache",
     });
 
-    // レスポンスをJSON形式で返します。
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("外部APIエラー:", errorText);
+      return NextResponse.json(
+        { error: `外部APIエラー: ${errorText}` },
+        { status: response.status }
+      );
+    }
+
     const data = await response.json();
+    console.log("外部APIレスポンス:", data);
     return NextResponse.json(data);
   } catch (error) {
-    // エラーレスポンスを返します。
+    console.error("サーバー内部エラー:", error);
     return NextResponse.json(
-      { error: "外部APIへのリクエストに失敗しました。" },
+      { error: "サーバー内部エラーが発生しました。" },
       { status: 500 }
     );
   }
