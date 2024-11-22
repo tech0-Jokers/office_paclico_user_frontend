@@ -50,7 +50,7 @@ export default function MessageCard({
             </span>
           </Button>
           <span className="text-sm text-purple-600">
-            {message.replies.length} 件の返信
+            {message.replies?.length || 0} 件の返信
           </span>
         </div>
       </CardContent>

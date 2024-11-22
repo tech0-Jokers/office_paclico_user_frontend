@@ -7,7 +7,7 @@ export interface Message {
   message_content: string;
   product_id: number;
   product_name: string;
-  send_date: string | null;
+  send_date: Date | null; // メッセージ送信日時（nullの場合もあり）
   sender_user_name: string;
   receiver_user_name: string;
   product_image_url: string | null;
@@ -16,12 +16,13 @@ export interface Message {
   reply_comments: ReplyComment[];
 }
 
-interface ReplyComment {
-  reply_comment_id: number; // リプライコメントのID
-  comment_user_id: number; // コメントしたユーザーのID
-  comment_user_name: string; // コメントしたユーザーの名前
-  message_content: string; // コメントの内容
-  send_date: Date | null; // コメント送信日時（nullの場合もあり）
+// ReplyComment 型をエクスポート
+export interface ReplyComment {
+  reply_comment_id: number;
+  comment_user_id: number;
+  comment_user_name: string;
+  message_content: string;
+  send_date: Date | null;
 }
 
 // 返信の型

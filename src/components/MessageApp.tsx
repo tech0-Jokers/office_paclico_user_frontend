@@ -24,34 +24,7 @@ export default function MessageApp() {
       // データをサーバーサイドで取得
       const data = await fetchMessagesData(organizationId);
 
-      // サーバーのデータをフロントエンド用の形式に変換
-      const mappedMessages = data.map((msg: any) => ({
-        message_id: msg.message_id,
-        message_content: msg.message_content,
-        sender_user_id: msg.sender_user_id,
-        receiver_user_id: msg.receiver_user_id,
-        sender_user_name: msg.sender_user_name,
-        receiver_user_name: msg.receiver_user_name,
-        product_id: msg.product_id,
-        product_name: msg.product_name,
-        send_date: msg.send_date ? new Date(msg.send_date).toISOString() : null, // Dateをstringに変換
-        count_of_likes: msg.count_of_likes, // 初期値として「いいね」を0に設定
-        replies: [], // 初期値として返信リストを空に設定
-        product_image_url: msg.product_image_url || null, // APIに画像URLが含まれると仮定
-        reply_comments: (msg.reply_comments || []).map((reply: any) => ({
-          reply_comment_id: reply.reply_comment_id,
-          comment_user_id: reply.comment_user_id,
-          comment_user_name: reply.comment_user_name,
-          message_content: reply.message_content,
-          send_date: reply.send_date
-            ? new Date(reply.send_date).toLocaleString("ja-JP", {
-                timeZone: "Asia/Tokyo",
-              })
-            : null, // Dateをstringに変換
-        })),
-      }));
-
-      setMessages(mappedMessages); // メッセージを状態に保存
+      setMessages(data); // 取得したデータをそのまま使用
     } catch (error) {
       console.error("メッセージ取得エラー:", error);
       setError(
