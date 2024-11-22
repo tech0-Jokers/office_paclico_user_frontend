@@ -13,6 +13,14 @@ export interface Message {
   product_image_url: string | null;
   count_of_likes: number;
   replies: Reply[];
+  reply_comments: ReplyComment[];
+}
+
+interface ReplyComment {
+  reply_comment_id: number; // リプライコメントのID
+  comment_user_id: number; // コメントしたユーザーのID
+  message_content: string; // コメントの内容
+  send_date: Date | null; // コメント送信日時（nullの場合もあり）
 }
 
 // 返信の型

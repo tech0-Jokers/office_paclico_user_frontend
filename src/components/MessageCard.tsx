@@ -30,6 +30,11 @@ export default function MessageCard({
             priority
           />
         </div>
+        <div className="text-purple-600">
+          {message.reply_comments.map((comment, index) => (
+            <p key={index}>Comment: {comment.message_content}</p>
+          ))}
+        </div>
         <p className="text-purple-600">Name: {message.product_name}</p>
         <p className="font-semibold text-purple-700">
           To: {message.receiver_user_name}
