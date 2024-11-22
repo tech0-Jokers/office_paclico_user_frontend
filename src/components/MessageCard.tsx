@@ -24,14 +24,13 @@ export default function MessageCard({
       <CardContent className="p-4">
         <div className="aspect-video relative mb-2">
           <Image
-            src={message.imageUrl || "/placeholder.png"}
+            src={message.product_image_url || "/placeholder.png"}
             alt="Message image"
             fill
             className="object-contain rounded-md"
             priority
           />
         </div>
-        <p className="text-purple-600">ImageURL: {message.imageUrl}</p>
         <p className="text-purple-600">Name: {message.product_name}</p>
         <p className="font-semibold text-purple-700">
           To: {message.receiver_user_name}

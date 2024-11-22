@@ -5,8 +5,11 @@ import { NextResponse } from "next/server";
 
 // GETリクエストを処理する関数をエクスポートします。
 // `request`はリクエストオブジェクト、`params`はURLパラメータを含みます。
-export async function POST(request, { params }) {
+// requestのbodyを取得するには、`await request.json()`を使用します。
+
+export async function PUT(request) {
   // URLパラメータから組織IDを取得します。
+  // requestのbodyを取得するには、`await request.json()`を使用します。
 
   // 環境変数から外部APIのベースURLを取得します。
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
@@ -20,7 +23,7 @@ export async function POST(request, { params }) {
   }
 
   // 外部APIにリクエストを送るための完全なURLを作成します。
-  const requestUrl = `${apiUrl}/inventory_products/purchase`;
+  const requestUrl = `${apiUrl}/inventory_products/purchase/`;
 
   try {
     // 外部APIに対してデータ取得のリクエストを送信します。

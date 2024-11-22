@@ -108,7 +108,7 @@ export default function AmbassadorShop({
     try {
       const response = await fetch(requestUrl, {
         // APIリクエストを送信
-        method: "POST", // POSTリクエストを送信
+        method: "PUT", // PUTリクエストを送信
         headers: { "Content-Type": "application/json" }, // JSON形式でデータを送信
         body: JSON.stringify(purchaseData), // 購入データをJSON形式で送信
       });

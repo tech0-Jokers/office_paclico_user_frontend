@@ -42,7 +42,7 @@ export default function MessageApp() {
         send_date: msg.send_date ? new Date(msg.send_date).toISOString() : null, // Dateをstringに変換
         likes: 0, // 初期値として「いいね」を0に設定
         replies: [], // 初期値として返信リストを空に設定
-        imageUrl: msg.product_image_url || null, // APIに画像URLが含まれると仮定
+        product_image_url: msg.product_image_url || null, // APIに画像URLが含まれると仮定
       }));
 
       setMessages(mappedMessages); // メッセージを状態に保存

@@ -10,7 +10,7 @@ export interface Message {
   send_date: string | null;
   sender_user_name: string;
   receiver_user_name: string;
-  imageUrl: string | null;
+  product_image_url: string | null;
   likes: number;
   replies: Reply[];
 }
