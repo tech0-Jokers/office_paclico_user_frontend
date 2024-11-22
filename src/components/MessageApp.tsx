@@ -17,8 +17,9 @@ export default function MessageApp() {
   const [selectedMessage, setSelectedMessage] = useState<Message | null>(null); // 選択されたメッセージを管理
   const [error, setError] = useState<string | null>(null); // エラーを管理
   const [loading, setLoading] = useState<boolean>(false); // ローディング状態を管理
+  const [organizationId, setOrganizationId] = useState<number>(1); // 組織IDを管理
 
-  const organizationId = 2; // 仮の組織ID（実際のアプリでは動的に変更）
+  //const organizationId = 2; // 仮の組織ID（実際のアプリでは動的に変更）
 
   // サーバーからメッセージを取得する関数
   const fetchMessages = async () => {
@@ -57,9 +58,10 @@ export default function MessageApp() {
   };
 
   // 初回レンダリング時にメッセージを取得
+  // organizationIdが変更されたときにメッセージを再取得
   useEffect(() => {
     fetchMessages();
-  }, []);
+  }, [organizationId]);
 
   // 「いいね」ボタンがクリックされたときの処理
   const handleLike = (e: React.MouseEvent, id: number) => {
@@ -129,6 +131,22 @@ export default function MessageApp() {
 
       {/* エラーがある場合に表示 */}
       {error && <p className="text-red-500">{error}</p>}
+
+      {/* 組織ID選択プルダウン */}
+      <div className="flex items-center mb-4">
+        <label htmlFor="organization-select" className="text-purple-800 mr-2">
+          組織を選択:
+        </label>
+        <select
+          id="organization-select"
+          className="p-2 border border-purple-300 rounded"
+          onChange={(e) => setOrganizationId(parseInt(e.target.value, 10))}
+        >
+          <option value="1">組織1</option>
+          <option value="2">組織2</option>
+          <option value="3">組織3</option>
+        </select>
+      </div>
 
       {/* 新しいメッセージ送信フォーム */}
       <div className="flex justify-start mb-4">
