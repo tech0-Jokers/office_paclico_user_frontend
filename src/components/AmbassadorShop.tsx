@@ -9,8 +9,8 @@ import { InventryCard } from "@/components/InventryCard"; // 商品カードコ�
 
 // お菓子データの型を定義します。
 type Chocolate = {
-  product_id: number; // お菓子のID
-  product_name: string; // お菓子の名前
+  id: number; // お菓子のID
+  name: string; // お菓子の名前
   product_image_url: string; // お菓子の画像URL
   stock_quantity: number; // 在庫数
 };
@@ -22,11 +22,7 @@ type CartItem = {
 };
 
 // メインのコンポーネント
-export default function AmbassadorShop({
-  organizationId,
-}: {
-  organizationId: number;
-}) {
+const AmbassadorShop = ({ organizationId }: { organizationId: number }) => {
   const [chocolates, setChocolates] = useState<Chocolate[]>([]); // お菓子のデータを保持するステート
   const [cart, setCart] = useState<CartItem[]>([]); // カートに追加された商品を管理するステート
   const [favorites, setFavorites] = useState<number[]>([]); // お気に入りリスト
@@ -43,7 +39,11 @@ export default function AmbassadorShop({
   const fetchChocolates = async (organizationId: number) => {
     const requestUrl = `/api/products/${organizationId}`; // APIのエンドポイントを作成
     try {
-      const response = await fetch(requestUrl); // APIリクエストを送信
+      const response = await fetch(requestUrl, {
+        headers: {
+          "Cache-Control": "no-cache", // キャッシュを無効化
+        },
+      }); // APIリクエストを送信
 
       // レスポンスがエラーの場合は例外をスロー
       if (!response.ok) {
@@ -111,6 +111,7 @@ export default function AmbassadorShop({
         method: "PUT", // PUTリクエストを送信
         headers: { "Content-Type": "application/json" }, // JSON形式でデータを送信
         body: JSON.stringify(purchaseData), // 購入データをJSON形式で送信
+        cache: "no-cache", // キャッシュを無効化
       });
 
       if (!response.ok) {
@@ -138,13 +139,13 @@ export default function AmbassadorShop({
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {chocolates.map((chocolate) => (
             <InventryCard
-              key={chocolate.product_id}
-              name={chocolate.product_name}
+              key={chocolate.id}
+              name={chocolate.name}
               imageSrc={chocolate.product_image_url}
-              isFavorite={favorites.includes(chocolate.product_id)} // お気に入り状態
-              onToggleFavorite={() => toggleFavorite(chocolate.product_id)} // お気に入りの切り替え
+              isFavorite={favorites.includes(chocolate.id)} // お気に入り状態
+              onToggleFavorite={() => toggleFavorite(chocolate.id)} // お気に入りの切り替え
               onAddToCart={
-                (quantity) => addToCart(chocolate.product_id, quantity) // カートに追加
+                (quantity) => addToCart(chocolate.id, quantity) // カートに追加
               }
             />
           ))}
@@ -159,16 +160,14 @@ export default function AmbassadorShop({
 
           {/* カートに入っている商品のリスト */}
           {cart.map((item) => {
-            const chocolate = chocolates.find(
-              (c) => c.product_id === item.product_id
-            ); // 商品の詳細情報を取得
+            const chocolate = chocolates.find((c) => c.id === item.product_id); // 商品の詳細情報を取得
             return chocolate ? (
               <div
                 key={item.product_id}
                 className="flex justify-between items-center mb-2"
               >
                 <span>
-                  {chocolate.product_name} x {item.quantity}
+                  {chocolate.name} x {item.quantity}
                 </span>
                 {/* カートから商品を削除するボタン */}
                 <Button
@@ -188,4 +187,6 @@ export default function AmbassadorShop({
       </div>
     </div>
   );
-}
+};
+
+export default AmbassadorShop;

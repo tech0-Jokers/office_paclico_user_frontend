@@ -31,8 +31,10 @@ export async function PUT(request) {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
+        "Cache-Control": "no-cache", // キャッシュを無効化
       },
       body: JSON.stringify(await request.json()),
+      cache: "no-cache ", // キャッシュを無効化
     });
 
     // レスポンスをJSON形式で返します。

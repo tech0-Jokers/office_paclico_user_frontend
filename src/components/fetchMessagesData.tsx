@@ -1,15 +1,16 @@
 // src/app/components/fetchMessagesServer.tsx
 
 interface Message {
-  message_id: number; // プロパティ名を修正
+  message_id: number;
   sender_user_id: number;
   receiver_user_id: number;
   message_content: string;
   product_id: number;
-  send_date: string | null;
+  product_name: string;
+  send_date: Date | null; // send_dateをDate型に修正
   sender_user_name: string;
   receiver_user_name: string;
-  imageUrl: string | null;
+  product_image_url: string | null;
   likes: number;
 }
 
@@ -37,20 +38,30 @@ const fetchMessagesData = async (
 
   const data = await response.json();
 
-  return data.messages.map((msg: any) => ({
-    message_id: msg.message_id,
-    message_content: msg.message_content,
-    sender_user_id: msg.sender_user_id,
-    receiver_user_id: msg.receiver_user_id,
-    sender_user_name: msg.sender_user_name,
-    receiver_user_name: msg.receiver_user_name,
-    product_id: msg.product_id,
-    product_name: msg.product_name,
-    send_date: msg.send_date ? new Date(msg.send_date) : null,
-    likes: 0,
-    replies: [],
-    product_image_url: msg.product_image_url || null, // APIに画像URLが含まれると仮定
-  }));
+  // メッセージをマッピングし、日付でソート
+  return data.messages
+    .map(
+      (msg: any): Message => ({
+        message_id: msg.message_id,
+        message_content: msg.message_content,
+        sender_user_id: msg.sender_user_id,
+        receiver_user_id: msg.receiver_user_id,
+        sender_user_name: msg.sender_user_name,
+        receiver_user_name: msg.receiver_user_name,
+        product_id: msg.product_id,
+        product_name: msg.product_name,
+        send_date: msg.send_date ? new Date(msg.send_date) : null,
+        likes: 0,
+        product_image_url: msg.product_image_url || null, // APIに画像URLが含まれると仮定
+      })
+    )
+    .sort((a: Message, b: Message) => {
+      // send_dateでソート（新しい順）
+      if (!a.send_date && !b.send_date) return 0; // 両方nullの場合は順序維持
+      if (!a.send_date) return 1; // aがnullの場合、後ろに移動
+      if (!b.send_date) return -1; // bがnullの場合、前に移動
+      return b.send_date.getTime() - a.send_date.getTime(); // 日付で比較
+    });
 };
 
 export default fetchMessagesData;

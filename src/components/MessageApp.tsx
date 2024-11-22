@@ -78,7 +78,9 @@ export default function MessageApp() {
     try {
       const response = await fetch("/api/send_message", {
         method: "POST", // メッセージを送信するHTTPメソッド
-        headers: { "Content-Type": "application/json" }, // JSON形式でデータを送信
+        headers: {
+          "Content-Type": "application/json",
+        }, // JSON形式でデータを送信
         body: JSON.stringify(newMessage), // 新しいメッセージをJSON形式で送信
       });
 
