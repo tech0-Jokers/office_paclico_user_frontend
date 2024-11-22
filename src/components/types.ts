@@ -11,7 +11,7 @@ export interface Message {
   sender_user_name: string;
   receiver_user_name: string;
   product_image_url: string | null;
-  likes: number;
+  count_of_likes: number;
   replies: Reply[];
 }
 

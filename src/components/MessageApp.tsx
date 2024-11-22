@@ -19,8 +19,6 @@ export default function MessageApp() {
   const [loading, setLoading] = useState<boolean>(false); // ローディング状態を管理
   const [organizationId, setOrganizationId] = useState<number>(1); // 組織IDを管理
 
-  //const organizationId = 2; // 仮の組織ID（実際のアプリでは動的に変更）
-
   // サーバーからメッセージを取得する関数
   const fetchMessages = async () => {
     setLoading(true); // データ取得中の状態にする
@@ -41,7 +39,7 @@ export default function MessageApp() {
         product_id: msg.product_id,
         product_name: msg.product_name,
         send_date: msg.send_date ? new Date(msg.send_date).toISOString() : null, // Dateをstringに変換
-        likes: 0, // 初期値として「いいね」を0に設定
+        count_of_likes: msg.count_of_likes, // 初期値として「いいね」を0に設定
         replies: [], // 初期値として返信リストを空に設定
         product_image_url: msg.product_image_url || null, // APIに画像URLが含まれると仮定
       }));
@@ -64,13 +62,45 @@ export default function MessageApp() {
   }, [organizationId]);
 
   // 「いいね」ボタンがクリックされたときの処理
-  const handleLike = (e: React.MouseEvent, id: number) => {
+  const handleLike = async (e: React.MouseEvent, id: number) => {
     e.stopPropagation(); // 親要素のクリックイベントを止める
+
+    // 楽観的にローカル状態を更新
     setMessages((prevMessages) =>
       prevMessages.map((msg) =>
-        msg.message_id === id ? { ...msg, likes: msg.likes + 1 } : msg
+        msg.message_id === id
+          ? { ...msg, count_of_likes: (msg.count_of_likes || 0) + 1 }
+          : msg
       )
-    ); // 該当するメッセージの「いいね」数を増加
+    );
+
+    try {
+      const response = await fetch(`/api/like_message/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        cache: "no-store", // キャッシュを無効化
+        body: JSON.stringify({}),
+      });
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      // サーバー通信成功時には何もしない（リロード時に最新データを取得する）
+    } catch (error) {
+      console.error("Failed to like the message:", error);
+
+      // エラー発生時に元の値に戻す
+      setMessages((prevMessages) =>
+        prevMessages.map((msg) =>
+          msg.message_id === id
+            ? { ...msg, count_of_likes: (msg.count_of_likes || 1) - 1 }
+            : msg
+        )
+      );
+    }
   };
 
   // 新しいメッセージをリストに追加する関数

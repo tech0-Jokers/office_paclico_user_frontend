@@ -11,7 +11,7 @@ interface Message {
   sender_user_name: string;
   receiver_user_name: string;
   product_image_url: string | null;
-  likes: number;
+  count_of_likes: number;
 }
 
 interface Props {
@@ -51,7 +51,7 @@ const fetchMessagesData = async (
         product_id: msg.product_id,
         product_name: msg.product_name,
         send_date: msg.send_date ? new Date(msg.send_date) : null,
-        likes: 0,
+        count_of_likes: msg.count_of_likes,
         product_image_url: msg.product_image_url || null, // APIに画像URLが含まれると仮定
       })
     )

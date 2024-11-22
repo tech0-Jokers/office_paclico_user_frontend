@@ -20,7 +20,6 @@ export default function MessageCard({
       className="bg-white cursor-pointer hover:shadow-lg transition-shadow"
       onClick={() => onSelect(message)}
     >
-      <pre className="text-xs text-gray-500 whitespace-pre-wrap"></pre>
       <CardContent className="p-4">
         <div className="aspect-video relative mb-2">
           <Image
@@ -46,7 +45,7 @@ export default function MessageCard({
           >
             👍 いいね{" "}
             <span className="inline-flex items-center justify-center w-6 h-6 bg-purple-100 rounded-md text-purple-800 font-semibold">
-              {message.likes}
+              {message.count_of_likes}
             </span>
           </Button>
           <span className="text-sm text-purple-600">
