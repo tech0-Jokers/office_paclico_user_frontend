@@ -39,7 +39,7 @@ export default function MessageApp() {
   // organizationIdが変更されたときにメッセージを再取得
   useEffect(() => {
     fetchMessages();
-  }, [organizationId]);
+  }, [fetchMessages]); // 依存配列に fetchMessages を追加
 
   // 「いいね」ボタンがクリックされたときの処理
   const handleLike = async (e: React.MouseEvent, id: number) => {

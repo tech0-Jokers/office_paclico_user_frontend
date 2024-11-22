@@ -2,7 +2,6 @@
 
 import { useState } from "react"; // ReactのuseStateフックをインポート
 import { Button } from "@/components/ui/button"; // ボタンコンポーネントをインポート
-import { Input } from "@/components/ui/input"; // 入力フィールドコンポーネントをインポート
 import { Label } from "@/components/ui/label"; // ラベルコンポーネントをインポート
 import { Textarea } from "@/components/ui/textarea"; // テキストエリアコンポーネントをインポーネ���ト
 import { Reply } from "@/components/types"; // Reply型をインポート
