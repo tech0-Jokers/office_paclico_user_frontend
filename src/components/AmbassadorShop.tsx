@@ -11,6 +11,7 @@ import { InventryCard } from "@/components/InventryCard"; // 商品カードコ�
 type Chocolate = {
   product_id: number; // お菓子のID
   product_name: string; // お菓子の名前
+  stockQuantity: number; // 在庫数
   product_image_url: string; // お菓子の画像URL
   stock_quantity: number; // 在庫数
 };
@@ -22,12 +23,8 @@ type CartItem = {
 };
 
 // メインのコンポーネント
-export default function AmbassadorShop({
-  organizationId,
-}: {
-  organizationId: number;
-}) {
-  const [chocolates, setChocolate] = useState<Chocolate[]>([]); // お菓子のデータを保持するステート
+const AmbassadorShop = ({ organizationId }: { organizationId: number }) => {
+  const [chocolates, setChocolates] = useState<Chocolate[]>([]); // お菓子のデータを保持するステート
   const [cart, setCart] = useState<CartItem[]>([]); // カートに追加された商品を管理するステート
   const [favorites, setFavorites] = useState<number[]>([]); // お気に入りリスト
   const [error, setError] = useState<string | null>(null); // エラーメッセージを保持するステート
@@ -43,7 +40,11 @@ export default function AmbassadorShop({
   const fetchChocolates = async (organizationId: number) => {
     const requestUrl = `/api/products/${organizationId}`; // APIのエンドポイントを作成
     try {
-      const response = await fetch(requestUrl); // APIリクエストを送信
+      const response = await fetch(requestUrl, {
+        headers: {
+          "Cache-Control": "no-cache", // キャッシュを無効化
+        },
+      }); // APIリクエストを送信
 
       // レスポンスがエラーの場合は例外をスロー
       if (!response.ok) {
@@ -51,7 +52,7 @@ export default function AmbassadorShop({
       }
 
       const data = await response.json(); // レスポンスデータをJSON形式で取得
-      setChocolate(data); // 取得したデータをステートにセット
+      setChocolates(data); // 取得したデータをステートにセット
       setError(null); // エラーメッセージをクリア
     } catch (error) {
       console.error("データ取得中にエラー:", error); // コンソールにエラーを表示
@@ -92,6 +93,42 @@ export default function AmbassadorShop({
     );
   };
 
+  // カートの商品を購入する関数
+  const purchase = async (organizationId: number) => {
+    const requestUrl = `/api/purchase/`; // APIのエンドポイントを作成
+
+    // 購入データを作成
+    const purchaseData = {
+      organization_id: organizationId,
+      purchases: cart.map((item) => ({
+        product_id: item.product_id,
+        purchase_quantity: item.quantity,
+      })),
+    };
+
+    // データ構造をログ出力して検証
+    console.log("Purchase Data:", purchaseData);
+
+    try {
+      const response = await fetch(requestUrl, {
+        // APIリクエストを送信
+        method: "PUT", // PUTリクエストを送信
+        headers: { "Content-Type": "application/json" }, // JSON形式でデータを送信
+        body: JSON.stringify(purchaseData), // 購入データをJSON形式で送信
+        cache: "no-cache", // キャッシュを無効化
+      });
+
+      if (!response.ok) {
+        throw new Error(`購入処理に失敗しました: ${response.status}`);
+      }
+
+      setCart([]); // カートを空にする
+    } catch (error) {
+      console.error("購入処理中にエラー:", error);
+      setError("購入処理に失敗しました。後でもう一度試してください。");
+    }
+  };
+
   // UIの描画部分
   return (
     <div className="min-h-screen bg-purple-100 p-8">
@@ -108,6 +145,7 @@ export default function AmbassadorShop({
             <InventryCard
               key={chocolate.product_id}
               name={chocolate.product_name}
+              stockQuantity={chocolate.stock_quantity}
               imageSrc={chocolate.product_image_url}
               isFavorite={favorites.includes(chocolate.product_id)} // お気に入り状態
               onToggleFavorite={() => toggleFavorite(chocolate.product_id)} // お気に入りの切り替え
@@ -150,8 +188,12 @@ export default function AmbassadorShop({
           })}
         </div>
         {/* カートに入っている商品を購入するボタンで、ボタンを押すとモーダルウィンドウが開く */}
-        <Button variant="default">購入</Button>
+        <Button variant="default" onClick={() => purchase(organizationId)}>
+          購入
+        </Button>
       </div>
     </div>
   );
-}
+};
+
+export default AmbassadorShop;

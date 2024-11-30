@@ -21,33 +21,36 @@ export default function MessageCard({
       onClick={() => onSelect(message)}
     >
       <CardContent className="p-4">
+        <p className="font-semibold text-purple-700">
+          To: {message.receiver_user_name}
+        </p>
+        <p className="text-purple-600">From: {message.sender_user_name}</p>
+        <p className="text-purple-800 mt-2">{message.message_content}</p>
         <div className="aspect-video relative mb-2">
           <Image
-            src={message.imageUrl}
+            src={message.product_image_url || "/placeholder.png"}
             alt="Message image"
             fill
             className="object-contain rounded-md"
-            priority // 優先的に読み込む
+            priority
           />
         </div>
-        <p className="font-semibold text-purple-700">To: {message.to}</p>
-        <p className="text-purple-600">From: {message.from}</p>
-        <p className="text-purple-800 mt-2">{message.message}</p>
+        <p className="text-purple-600">Name: {message.product_name}</p>
+
         <div className="mt-2 flex items-center justify-between">
-          {/* 「いいね」ボタン */}
           <Button
             size="sm"
             variant="outline"
             className="text-purple-600 border-purple-600 flex items-center gap-1"
-            onClick={(e) => onLike(e, message.id)}
+            onClick={(e) => onLike(e, message.message_id)}
           >
             👍 いいね{" "}
             <span className="inline-flex items-center justify-center w-6 h-6 bg-purple-100 rounded-md text-purple-800 font-semibold">
-              {message.likes}
+              {message.count_of_likes}
             </span>
           </Button>
           <span className="text-sm text-purple-600">
-            {message.replies.length} 件の返信
+            {message.replies?.length || 0} 件の返信
           </span>
         </div>
       </CardContent>

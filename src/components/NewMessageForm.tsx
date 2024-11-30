@@ -3,7 +3,6 @@
 import Image from "next/image"; // 画像コンポーネントをインポート
 import { useState, useEffect } from "react"; // useStateとuseEffectフックをインポート
 import { Button } from "@/components/ui/button"; // ボタンコンポーネントをインポート
-import { Input } from "@/components/ui/input"; // 入力コンポーネントをインポート
 import { Label } from "@/components/ui/label"; // ラベルコンポーネントをインポート
 import {
   Select,
@@ -14,72 +13,208 @@ import {
 } from "@/components/ui/select"; // セレクトコンポーネントをインポート
 import { Textarea } from "@/components/ui/textarea"; // テキストエリアコンポーネントをインポート
 import { predefinedMessages } from "@/components/constants"; // 定義済みメッセージをインポート
-import { Message } from "@/components/types"; // Message型をインポート
-import { Chocolate } from "@/components/types";
+import { Products } from "@/components/types";
 
-// 新しいメッセージを作成するフォームコンポーネント
+// 型定義
+interface User {
+  user_id: number; // ユーザーID
+  user_name: string; // ユーザー名
+}
+
+interface NewMessageFormProps {
+  onSubmit: () => void;
+  onClose: () => void;
+  organizationId: number; // 追加
+}
+
+// エラーメッセージ表示用のコンポーネント
+const ErrorMessage = ({ error }: { error: string | null }) => {
+  if (!error) return null; // エラーがない場合は何も表示しない
+  return <div className="error-message text-red-600 p-2">{error}</div>; // エラーがある場合は赤いテキストで表示
+};
+
+// メッセージ送信フォームのコンポーネント
 export default function NewMessageForm({
-  onSubmit,
-}: {
-  onSubmit: (message: Omit<Message, "id" | "likes" | "replies">) => void; // メッセージ送信時のコールバック
-}) {
+  onClose,
+  organizationId,
+}: NewMessageFormProps) {
   // 各フィールドの入力値を管理する状態変数
   const [to, setTo] = useState(""); // 送信先
   const [from, setFrom] = useState(""); // 送信元
   const [message, setMessage] = useState(predefinedMessages[0]); // メッセージ内容
   const [treat, setTreat] = useState(""); // お菓子の種類
+  const [users, setUsers] = useState<User[]>([]); // ユーザーリスト
   const [imageUrl, setImageUrl] = useState(""); // 画像URL
   const [messageInputType, setMessageInputType] = useState<"select" | "custom">(
     "select"
   ); // メッセージ入力方法の選択
-  const [chocolates, setChocolates] = useState<Chocolate[]>([]); // チョコレートのデータを格納する状態変数
+  const [products, setProducts] = useState<Products[]>([]); // お菓子のデータを格納する状態変数
+  const [selectedProduct] = useState<Products | null>(null); // 選択されたお菓子のデータを格納する状態変数
+  const [selectedSendUser] = useState<User | null>(null); // 送信先ユーザー情報
+  const [selectedFromUser] = useState<User | null>(null); // 送信先ユーザー情報
+  const [error, setError] = useState<string | null>(null); // エラーメッセージを保持するステート
 
-  // コンポーネントのマウント時にチョコレートデータを取得
+  // コンポーネントのマウント時にデータを取得します。
   useEffect(() => {
-    const fetchChocolates = async () => {
-      const response = await fetch("/api/chocolate"); // APIからデータを取得
-      const data = await response.json(); // JSON形式にパース
-      setChocolates(data.chocolates); // 状態を更新
-    };
+    if (organizationId) {
+      fetchProducts(organizationId); // データ取得関数を呼び出す
+      fetchUsers(organizationId); // ユーザー情報を取得
+    }
+  }, [organizationId]); // organizationIdが変化するたびに再実行
 
-    fetchChocolates(); // データ取得関数を呼び出し
-  }, []);
+  // APIからユーザー情報を取得する関数
+  const fetchUsers = async (organizationId: number) => {
+    const requestUrl = `/api/user_information/${organizationId}`;
 
-  // お菓子選択時の処理
-  const handleTreatChange = (value: string) => {
-    setTreat(value); // お菓子を選択
-    const selectedChocolate = chocolates.find(
-      (choco) => choco.Product_Name === value
-    );
-    setImageUrl(selectedChocolate ? selectedChocolate.Image_Url : ""); // 選択したお菓子の画像URLをセット
+    try {
+      const response = await fetch(requestUrl);
+
+      if (!response.ok) {
+        throw new Error(`ユーザー情報の取得に失敗しました: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      // 配列形式であることをチェック
+      if (!Array.isArray(data)) {
+        throw new Error("APIレスポンスが配列形式ではありません。");
+      }
+
+      setUsers(data); // 正常なデータをセット
+      setError(null);
+    } catch (error) {
+      console.error("ユーザー情報取得エラー:", error);
+      setUsers([]); // エラー時は空配列を設定
+      setError("ユーザー情報の取得に失敗しました。");
+    }
   };
 
-  // フォーム送信時の処理
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault(); // デフォルトのフォーム送信を防ぐ
-    onSubmit({ to, from, message, treat, imageUrl }); // 親コンポーネントにメッセージ内容を送信
-    // フォーム内容をリセット
+  // APIからお菓子データを取得する非同期関数
+  const fetchProducts = async (organizationId: number) => {
+    const requestUrl = `/api/products/${organizationId}`; // APIのエンドポイントを作成
+
+    try {
+      const response = await fetch(requestUrl); // APIリクエストを送信
+
+      // レスポンスがエラーの場合は例外をスロー
+      if (!response.ok) {
+        if (response.status === 404) {
+          throw new Error(
+            "指定された組織のお菓子データが見つかりませんでした。"
+          );
+        } else if (response.status === 403) {
+          throw new Error("データへのアクセス権限がありません。");
+        } else {
+          throw new Error(
+            `お菓子データの取得に失敗しました: ${response.status}`
+          );
+        }
+      }
+
+      const data = await response.json(); // レスポンスデータをJSON形式で取得
+      setProducts(data); // 取得したデータをステートにセット
+      setError(null); // エラーメッセージをクリア
+    } catch (error) {
+      console.error("データ取得中にエラー:", error); // コンソールにエラーを表示
+      setError("データの取得に失敗しました。後でもう一度試してください。"); // ユーザーにエラーメッセージを表示
+    }
+  };
+
+  // お菓子を選択したときの処理
+  const handleTreatChange = (value: string) => {
+    const selectedProduct = products.find(
+      (product) => product.product_id.toString() === value // product_idで一致を確認
+    );
+    setTreat(selectedProduct ? selectedProduct.product_id.toString() : ""); // 正しく設定
+    setImageUrl(selectedProduct ? selectedProduct.product_image_url : ""); // 選択したお菓子の画像URLをセット
+  };
+
+  // メッセージを送る相手を選択したときの処理
+  const handleSendUserSelect = (username: string) => {
+    const selectedSendUser = users.find((user) => user.user_name === username);
+    setTo(selectedSendUser ? selectedSendUser.user_id.toString() : "");
+  };
+
+  // メッセージを送るユーザーを選択したときの処理
+  const handleFromUserSelect = (username: string) => {
+    const selectedFromUser = users.find((user) => user.user_name === username);
+    setFrom(selectedFromUser ? selectedFromUser.user_id.toString() : "");
+  };
+
+  // フォームのリセット処理
+  const resetForm = () => {
     setTo("");
     setFrom("");
-    setMessage(messageInputType === "select" ? predefinedMessages[0] : "");
+    setMessage(predefinedMessages[0]);
     setTreat("");
     setImageUrl("");
     setMessageInputType("select");
   };
 
+  // フォーム送信時の処理
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault(); // デフォルトのフォーム送信を無効化
+
+    // フォームデータをオブジェクトとして構築
+    const formData = { to, from, message, treat };
+
+    try {
+      // APIエンドポイントのURL
+      const apiUrl = "/api/send_message"; // 適切なエンドポイントに置き換えてください
+
+      // POSTリクエストを送信
+      const response = await fetch(apiUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json", // JSON形式を指定
+        },
+        body: JSON.stringify(formData), // フォームデータをJSON文字列化
+      });
+
+      // レスポンスが成功かどうかを確認
+      if (!response.ok) {
+        throw new Error(`送信に失敗しました: ${response.status}`);
+      }
+
+      // レスポンスデータを取得（必要に応じて）
+      const responseData = await response.json();
+      console.log("送信成功:", responseData);
+
+      // フォームをリセットし、モーダルを閉じる
+      resetForm();
+      onClose();
+    } catch (error) {
+      console.error("送信エラー:", error);
+      setError(error instanceof Error ? error.message : "送信に失敗しました");
+    }
+  };
+
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      {/* エラーメッセージの表示 */}
+      <ErrorMessage error={error} />
       {/* お菓子の種類選択 */}
       <div>
+        {error && <div className="error-message text-red-600 p-2">{error}</div>}
+        {/* 既存のフォーム要素 */}
+      </div>
+      <div>
         <Label htmlFor="treat">お菓子</Label>
-        <Select value={treat} onValueChange={handleTreatChange} required>
+        <Select
+          value={selectedProduct ? selectedProduct.product_name : undefined}
+          onValueChange={handleTreatChange}
+          required
+        >
           <SelectTrigger>
             <SelectValue placeholder="お菓子を選択" />
           </SelectTrigger>
           <SelectContent>
-            {chocolates.map((chocolate) => (
-              <SelectItem key={chocolate.Index} value={chocolate.Product_Name}>
-                {chocolate.Product_Name}
+            {products.map((products) => (
+              <SelectItem
+                key={products.product_id}
+                value={products.product_id.toString()}
+              >
+                {products.product_name}
               </SelectItem>
             ))}
           </SelectContent>
@@ -97,26 +232,48 @@ export default function NewMessageForm({
         </div>
       )}
 
-      {/* 送信先フィールド */}
+      {/* メッセージを送る相手の選択 */}
       <div>
-        <Label htmlFor="to">To</Label>
-        <Input
-          id="to"
-          value={to}
-          onChange={(e) => setTo(e.target.value)}
+        <Label htmlFor="userSelect">送る相手を選んでください</Label>
+        <Select
+          value={selectedSendUser ? selectedSendUser.user_name : undefined}
+          onValueChange={handleSendUserSelect}
           required
-        />
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="ユーザーを選択" />
+          </SelectTrigger>
+          <SelectContent>
+            {users.map((user) => (
+              <SelectItem key={user.user_id} value={user.user_name}>
+                {user.user_name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
-      {/* 送信元フィールド */}
+
+      {/* メッセージの送り主の選択 */}
       <div>
-        <Label htmlFor="from">From</Label>
-        <Input
-          id="from"
-          value={from}
-          onChange={(e) => setFrom(e.target.value)}
+        <Label htmlFor="userSelect">あなたの名前を選んでください</Label>
+        <Select
+          value={selectedFromUser ? selectedFromUser.user_name : undefined}
+          onValueChange={handleFromUserSelect}
           required
-        />
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="ユーザーを選択" />
+          </SelectTrigger>
+          <SelectContent>
+            {users.map((user) => (
+              <SelectItem key={user.user_id} value={user.user_name}>
+                {user.user_name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
+
       {/* メッセージ入力方法の選択 */}
       <div>
         <Label>メッセージ入力方法</Label>

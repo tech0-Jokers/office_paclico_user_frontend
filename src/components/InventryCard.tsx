@@ -9,6 +9,7 @@ import Image from "next/image"; // Imageコンポーネントをインポート
 interface InventryCardProps {
   name: string;
   imageSrc: string;
+  stockQuantity: number;
   isFavorite: boolean;
   onToggleFavorite: () => void;
   onAddToCart: (quantity: number) => void;
@@ -17,6 +18,7 @@ interface InventryCardProps {
 export function InventryCard({
   name,
   imageSrc,
+  stockQuantity,
   onAddToCart,
 }: InventryCardProps) {
   const [quantity, setQuantity] = React.useState(1);
@@ -62,6 +64,7 @@ export function InventryCard({
               className="w-16 mr-2"
             />
             <Button onClick={() => onAddToCart(quantity)}>カートに追加</Button>
+            <span className="ml-4 text-gray-600">在庫数: {stockQuantity}</span>
           </div>
         </div>
       </CardFooter>
