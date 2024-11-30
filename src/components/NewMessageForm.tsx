@@ -48,7 +48,9 @@ export default function NewMessageForm({
   const [messageInputType, setMessageInputType] = useState<"select" | "custom">(
     "select"
   ); // メッセージ入力方法の選択
-  const [products, setProducts] = useState<Products[]>([]); // チョコレートのデータを格納する状態変数
+  const [products, setProducts] = useState<Products[]>([]); // お菓子のデータを格納する状態変数
+  const [selectedSendUser, setSelectedSendUser] = useState<User | null>(null); // 送信先ユーザー情報
+  const [selectedFromUser, setSelectedFromUser] = useState<User | null>(null); // 送信先ユーザー情報
   const [error, setError] = useState<string | null>(null); // エラーメッセージを保持するステート
 
   // 組織IDを定義します（仮に1を設定しています。実際の値に置き換えてください）
@@ -122,14 +124,21 @@ export default function NewMessageForm({
 
   // お菓子を選択したときの処理
   const handleTreatChange = (value: string) => {
-    setTreat(value); // 選択したお菓子の名前を保存
     const selectedProduct = products.find((p) => p.product_name === value); // お菓子データから選択肢を検索
-    setImageUrl(selectedProduct?.product_image_url || ""); // 画像URLを設定（見つからない場合は空）
+    setTreat(value); // 選択したお菓子の名前を保存
+    setTreat(selectedProduct ? selectedProduct.product_id.toString() : ""); // 画像URLを設定（見つからない場合は空）
   };
 
   // ユーザーを選択したときの処理
-  const handleUserSelect = (username: string) => {
-    const selectedUser = users.find((user) => user.user_name === username);
+  const handleSendUserSelect = (username: string) => {
+    const selectedSendUser = users.find((user) => user.user_name === username);
+    setSelectedUser(username); // 選択されたユーザー名を保存
+    setTo(username); // `to` フィールドにも設定
+  };
+
+  // ユーザーを選択したときの処理
+  const handleFromUserSelect = (username: string) => {
+    const selectedFromUser = users.find((user) => user.user_name === username);
     setSelectedUser(username); // 選択されたユーザー名を保存
     setTo(username); // `to` フィールドにも設定
   };
@@ -145,15 +154,40 @@ export default function NewMessageForm({
   };
 
   // フォーム送信時の処理
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault(); // デフォルトのフォーム送信を無効化
+
+    // フォームデータをオブジェクトとして構築
+    const formData = { to, from, message, treat };
+
     try {
-      onSubmit({ to, from, message, treat, imageUrl }); // 親コンポーネントにデータを送信
-      resetForm(); // フォームをリセット
-      onClose(); // モーダルを閉じる
+      // APIエンドポイントのURL
+      const apiUrl = "/api/send_message"; // 適切なエンドポイントに置き換えてください
+
+      // POSTリクエストを送信
+      const response = await fetch(apiUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json", // JSON形式を指定
+        },
+        body: JSON.stringify(formData), // フォームデータをJSON文字列化
+      });
+
+      // レスポンスが成功かどうかを確認
+      if (!response.ok) {
+        throw new Error(`送信に失敗しました: ${response.status}`);
+      }
+
+      // レスポンスデータを取得（必要に応じて）
+      const responseData = await response.json();
+      console.log("送信成功:", responseData);
+
+      // フォームをリセットし、モーダルを閉じる
+      resetForm();
+      onClose();
     } catch (error) {
       console.error("送信エラー:", error);
-      setError(error instanceof Error ? error.message : "送信に失敗しました"); // エラーメッセージを設定
+      setError(error instanceof Error ? error.message : "送信に失敗しました");
     }
   };
 
@@ -200,7 +234,11 @@ export default function NewMessageForm({
       {/* ユーザー選択セレクトボックス */}
       <div>
         <Label htmlFor="userSelect">送信先ユーザー</Label>
-        <Select value={selectedUser} onValueChange={handleUserSelect} required>
+        <Select
+          value={selectedSendUser ? selectedSendUser.user_name : undefined}
+          onValueChange={handleSendUserSelect}
+          required
+        >
           <SelectTrigger>
             <SelectValue placeholder="ユーザーを選択" />
           </SelectTrigger>
@@ -214,16 +252,27 @@ export default function NewMessageForm({
         </Select>
       </div>
 
-      {/* 送信元フィールド */}
+      {/* ユーザー選択セレクトボックス */}
       <div>
-        <Label htmlFor="from">From</Label>
-        <Input
-          id="from"
-          value={from}
-          onChange={(e) => setFrom(e.target.value)}
+        <Label htmlFor="userSelect">返信ユーザー</Label>
+        <Select
+          value={selectedFromUser ? selectedFromUser.user_name : undefined}
+          onValueChange={handleFromUserSelect}
           required
-        />
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="ユーザーを選択" />
+          </SelectTrigger>
+          <SelectContent>
+            {users.map((user) => (
+              <SelectItem key={user.user_id} value={user.user_name}>
+                {user.user_name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
+
       {/* メッセージ入力方法の選択 */}
       <div>
         <Label>メッセージ入力方法</Label>
