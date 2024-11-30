@@ -129,15 +129,16 @@ export default function NewMessageForm({
       (product) => product.product_id.toString() === value // product_idで一致を確認
     );
     setTreat(selectedProduct ? selectedProduct.product_id.toString() : ""); // 正しく設定
+    setImageUrl(selectedProduct ? selectedProduct.product_image_url : ""); // 選択したお菓子の画像URLをセット
   };
 
-  // ユーザーを選択したときの処理
+  // メッセージを送る相手を選択したときの処理
   const handleSendUserSelect = (username: string) => {
     const selectedSendUser = users.find((user) => user.user_name === username);
     setTo(selectedSendUser ? selectedSendUser.user_id.toString() : "");
   };
 
-  // ユーザーを選択したときの処理
+  // メッセージを送るユーザーを選択したときの処理
   const handleFromUserSelect = (username: string) => {
     const selectedFromUser = users.find((user) => user.user_name === username);
     setFrom(selectedFromUser ? selectedFromUser.user_id.toString() : "");
@@ -235,9 +236,9 @@ export default function NewMessageForm({
       )}
 
       {/* 送信先フィールド */}
-      {/* ユーザー選択セレクトボックス */}
+      {/* メッセージを送る相手の選択 */}
       <div>
-        <Label htmlFor="userSelect">送信先ユーザー</Label>
+        <Label htmlFor="userSelect">送る相手を選んでください</Label>
         <Select
           value={selectedSendUser ? selectedSendUser.user_name : undefined}
           onValueChange={handleSendUserSelect}
@@ -256,9 +257,9 @@ export default function NewMessageForm({
         </Select>
       </div>
 
-      {/* ユーザー選択セレクトボックス */}
+      {/* メッセージの送り主の選択 */}
       <div>
-        <Label htmlFor="userSelect">返信ユーザー</Label>
+        <Label htmlFor="userSelect">あなたの名前を選んでください</Label>
         <Select
           value={selectedFromUser ? selectedFromUser.user_name : undefined}
           onValueChange={handleFromUserSelect}

@@ -10,6 +10,12 @@ import ReplyForm from "@/components/ReplyForm"; // 返信フォームコンポ�
 import { useState } from "react"; // ReactのuseStateフックをインポート
 import { Message, Reply } from "@/components/types"; // 型定義をインポート
 
+// 型定義
+interface User {
+  user_id: number; // ユーザーID
+  user_name: string; // ユーザー名
+}
+
 // 選択されたメッセージの詳細を表示するダイアログコンポーネント
 export default function MessageDetailsDialog({
   message,
