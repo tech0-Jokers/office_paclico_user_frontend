@@ -10,6 +10,12 @@ export async function POST(request: Request) {
 
     // 必須フィールドのバリデーション
     if (!to || !from || !message || !treat) {
+      console.error("必須フィールドが不足しています。", {
+        to,
+        from,
+        message,
+        treat,
+      });
       return NextResponse.json(
         { error: "すべての必須フィールドを入力してください。" },
         { status: 400 }
@@ -17,6 +23,11 @@ export async function POST(request: Request) {
     }
 
     if (isNaN(to) || isNaN(from) || isNaN(treat)) {
+      console.error("送信データの形式が正しくありません。", {
+        to,
+        from,
+        treat,
+      });
       return NextResponse.json(
         { error: "送信データの形式が正しくありません。" },
         { status: 400 }
@@ -26,9 +37,9 @@ export async function POST(request: Request) {
     // 外部API用のリクエストデータ
     const requestData = {
       message_content: message,
-      sender_user_id: to,
-      receiver_user_id: from,
-      product_id: treat,
+      sender_user_id: parseInt(to, 10),
+      receiver_user_id: parseInt(from, 10),
+      product_id: parseInt(treat, 10),
     };
 
     // 環境変数から外部APIのURLを取得
@@ -36,13 +47,13 @@ export async function POST(request: Request) {
     if (!apiUrl) {
       console.error("API URLが設定されていません。");
       return NextResponse.json(
-        { error: "API URLが設定されていません。" },
+        { error: "サーバー設定エラー。" },
         { status: 500 }
       );
     }
 
     // 外部APIにリクエストを送信
-    const response = await fetch(`${apiUrl}/sendMessage`, {
+    const response = await fetch(`${apiUrl}/add_message`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -66,11 +77,7 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error("サーバーエラー:", error);
     return NextResponse.json(
-      {
-        error: `リクエストの処理中にエラーが発生しました: ${
-          (error as Error).message
-        }`,
-      },
+      { error: "サーバーエラーが発生しました。" },
       { status: 500 }
     );
   }

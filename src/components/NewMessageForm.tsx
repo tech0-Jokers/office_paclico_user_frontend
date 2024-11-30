@@ -40,15 +40,15 @@ export default function NewMessageForm({
   // 各フィールドの入力値を管理する状態変数
   const [to, setTo] = useState(""); // 送信先
   const [from, setFrom] = useState(""); // 送信元
-  const [message, setMessage] = useState(predefinedMessages[0]); // メッセージ内容
+  const [message, setMessage] = useState(predefinedMessages[0]); // メッセ��ジ内容
   const [treat, setTreat] = useState(""); // お菓子の種類
   const [users, setUsers] = useState<User[]>([]); // ユーザーリスト
-  const [selectedUser, setSelectedUser] = useState(""); // 選択されたユーザー
   const [imageUrl, setImageUrl] = useState(""); // 画像URL
   const [messageInputType, setMessageInputType] = useState<"select" | "custom">(
     "select"
   ); // メッセージ入力方法の選択
   const [products, setProducts] = useState<Products[]>([]); // お菓子のデータを格納する状態変数
+  const [selectedProduct, setSelectedProduct] = useState<Products | null>(null); // 選択されたお菓子のデータを格納する状態変数
   const [selectedSendUser, setSelectedSendUser] = useState<User | null>(null); // 送信先ユーザー情報
   const [selectedFromUser, setSelectedFromUser] = useState<User | null>(null); // 送信先ユーザー情報
   const [error, setError] = useState<string | null>(null); // エラーメッセージを保持するステート
@@ -124,23 +124,22 @@ export default function NewMessageForm({
 
   // お菓子を選択したときの処理
   const handleTreatChange = (value: string) => {
-    const selectedProduct = products.find((p) => p.product_name === value); // お菓子データから選択肢を検索
-    setTreat(value); // 選択したお菓子の名前を保存
-    setTreat(selectedProduct ? selectedProduct.product_id.toString() : ""); // 画像URLを設定（見つからない場合は空）
+    const selectedProduct = products.find(
+      (product) => product.product_id.toString() === value // product_idで一致を確認
+    );
+    setTreat(selectedProduct ? selectedProduct.product_id.toString() : ""); // 正しく設定
   };
 
   // ユーザーを選択したときの処理
   const handleSendUserSelect = (username: string) => {
     const selectedSendUser = users.find((user) => user.user_name === username);
-    setSelectedUser(username); // 選択されたユーザー名を保存
-    setTo(username); // `to` フィールドにも設定
+    setTo(selectedSendUser ? selectedSendUser.user_id.toString() : "");
   };
 
   // ユーザーを選択したときの処理
   const handleFromUserSelect = (username: string) => {
     const selectedFromUser = users.find((user) => user.user_name === username);
-    setSelectedUser(username); // 選択されたユーザー名を保存
-    setTo(username); // `to` フィールドにも設定
+    setFrom(selectedFromUser ? selectedFromUser.user_id.toString() : "");
   };
 
   // フォームのリセット処理
@@ -202,7 +201,11 @@ export default function NewMessageForm({
       </div>
       <div>
         <Label htmlFor="treat">お菓子</Label>
-        <Select value={treat} onValueChange={handleTreatChange} required>
+        <Select
+          value={selectedProduct ? selectedProduct.product_name : undefined}
+          onValueChange={handleTreatChange}
+          required
+        >
           <SelectTrigger>
             <SelectValue placeholder="お菓子を選択" />
           </SelectTrigger>
