@@ -13,7 +13,9 @@ export async function POST(request: Request) {
 
     // サーバー側で一意のIDを生成
     const newId =
-      messages.length > 0 ? Math.max(...messages.map((m) => m.id)) + 1 : 1;
+      messages.length > 0
+        ? Math.max(...messages.map((m) => m.message_id)) + 1
+        : 1;
 
     // 新しいメッセージを作成
     const newMessage = {
