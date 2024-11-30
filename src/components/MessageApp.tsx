@@ -160,7 +160,11 @@ export default function MessageApp() {
 
       {/* 新しいメッセージ送信フォーム */}
       <div className="flex justify-start mb-4">
-        <SendMessageApp addMessage={addMessage} />
+        <SendMessageApp
+          addMessage={addMessage}
+          organizationId={organizationId}
+        />{" "}
+        {/* 追加 */}
       </div>
 
       {/* メッセージリストの表示 */}

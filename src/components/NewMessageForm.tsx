@@ -23,6 +23,12 @@ interface User {
   user_name: string; // ユーザー名
 }
 
+interface NewMessageFormProps {
+  onSubmit: (message: Omit<Message, "id" | "likes" | "replies">) => void;
+  onClose: () => void;
+  organizationId: number; // 追加
+}
+
 // エラーメッセージ表示用のコンポーネント
 const ErrorMessage = ({ error }: { error: string | null }) => {
   if (!error) return null; // エラーがない場合は何も表示しない
@@ -33,14 +39,12 @@ const ErrorMessage = ({ error }: { error: string | null }) => {
 export default function NewMessageForm({
   onSubmit,
   onClose,
-}: {
-  onSubmit: (message: Omit<Message, "id" | "likes" | "replies">) => void; // 親コンポーネントから渡される送信処理のコールバック
-  onClose: () => void; // 親コンポーネントから渡されるモーダル閉じる処理のコールバック
-}) {
+  organizationId,
+}: NewMessageFormProps) {
   // 各フィールドの入力値を管理する状態変数
   const [to, setTo] = useState(""); // 送信先
   const [from, setFrom] = useState(""); // 送信元
-  const [message, setMessage] = useState(predefinedMessages[0]); // メッセ��ジ内容
+  const [message, setMessage] = useState(predefinedMessages[0]); // メッセージ内容
   const [treat, setTreat] = useState(""); // お菓子の種類
   const [users, setUsers] = useState<User[]>([]); // ユーザーリスト
   const [imageUrl, setImageUrl] = useState(""); // 画像URL
@@ -54,7 +58,7 @@ export default function NewMessageForm({
   const [error, setError] = useState<string | null>(null); // エラーメッセージを保持するステート
 
   // 組織IDを定義します（仮に1を設定しています。実際の値に置き換えてください）
-  const organizationId = 1;
+  // const organizationId = 1;
 
   // コンポーネントのマウント時にデータを取得します。
   useEffect(() => {

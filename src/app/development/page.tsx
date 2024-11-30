@@ -1,4 +1,4 @@
-import ChocolateShop from "@/components/ChocolateShop"; // コンポーネントのインポート
+import ChocolateShop from "@/components/archive/ChocolateShop"; // コンポーネントのインポート
 
 export default function HomePage() {
   return (
