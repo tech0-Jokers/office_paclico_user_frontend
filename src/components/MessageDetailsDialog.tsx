@@ -7,7 +7,7 @@ import {
   DialogDescription, // DialogDescriptionをインポート
 } from "@/components/ui/dialog"; // Dialogコンポーネント群をインポート
 import ReplyForm from "@/components/ReplyForm"; // 返信フォームコンポーネントをインポート
-import { useState } from "react"; // ReactのuseStateフックをインポート
+import { useState, useEffect } from "react"; // ReactのuseStateフックをインポート
 import { Message, Reply } from "@/components/types"; // 型定義をインポート
 
 // 型定義
@@ -19,17 +19,55 @@ interface User {
 // 選択されたメッセージの詳細を表示するダイアログコンポーネント
 export default function MessageDetailsDialog({
   message,
+  organizationId,
   onClose,
   onReply,
 }: {
   message: Message; // メッセージのデータ
+  organizationId: number; // 組織ID
   onClose: () => void; // ダイアログを閉じる関数
   onReply: (reply: Omit<Reply, "id">) => void; // 返信を処理する関数
 }) {
+  const [error, setError] = useState<string | null>(null); // エラーメッセージを保持するステート
+  const [users, setUsers] = useState<User[]>([]); // ユーザー情報を保持するステート
   // 選択されたメッセージを状態として保持します
   const [selectedMessage, setSelectedMessage] = useState<Message | null>(
     message || null // 初期値として渡されたメッセージを設定
   );
+
+  // コンポーネントのマウント時にデータを取得します。
+  useEffect(() => {
+    if (organizationId) {
+      fetchUsers(organizationId); // ユーザー情報を取得
+    }
+  }, [organizationId]); // organizationIdが変化するたびに再実行
+
+  // APIからユーザー情報を取得する関数
+  const fetchUsers = async (organizationId: number) => {
+    const requestUrl = `/api/user_information/${organizationId}`;
+
+    try {
+      const response = await fetch(requestUrl);
+
+      if (!response.ok) {
+        throw new Error(`ユーザー情報の取得に失敗しました: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      // 配列形式であることをチェック
+      if (!Array.isArray(data)) {
+        throw new Error("APIレスポンスが配列形式ではありません。");
+      }
+
+      setUsers(data); // 正常なデータをセット
+      setError(null);
+    } catch (error) {
+      console.error("ユーザー情報取得エラー:", error);
+      setUsers([]); // エラー時は空配列を設定
+      setError("ユーザー情報の取得に失敗しました。");
+    }
+  };
 
   // 返信を追加する関数
   const addReply = (
@@ -77,7 +115,7 @@ export default function MessageDetailsDialog({
 
         <div className="space-y-4">
           {selectedMessage && ( // 選択されたメッセージが存在する場合
-            <>
+            <div>
               <p>
                 <span className="font-semibold">To:</span>{" "}
                 {selectedMessage.receiver_user_name} {/* 受取人の表示 */}
@@ -116,9 +154,9 @@ export default function MessageDetailsDialog({
                   )
                 } // 送信者の名前を渡す
                 selectedUserName={selectedMessage.sender_user_name} // 送信者の名前を渡す
-                userNames={["Alice", "Bob", "Charlie"]} // ユーザー名のリストを渡す
+                userNames={users.map((user) => user.user_name)} // ユーザー名のリストを渡す
               />
-            </>
+            </div>
           )}
         </div>
       </DialogContent>

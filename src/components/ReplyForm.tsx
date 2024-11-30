@@ -33,7 +33,8 @@ export default function ReplyForm({
     <form onSubmit={handleSubmit} className="space-y-4">
       {/* 返信者の名前入力フィールド */}
       <div>
-        <Label htmlFor="replyFrom">From</Label> {/* ラベルを設定 */}
+        <Label htmlFor="replyFrom">あなたの名前を選んでください</Label>{" "}
+        {/* ラベルを設定 */}
         <select
           id="replyFrom" // プルダウンのID
           value={from} // 現在の返信者の名前

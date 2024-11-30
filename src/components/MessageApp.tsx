@@ -83,35 +83,6 @@ export default function MessageApp() {
     }
   };
 
-  // 新しいメッセージをリストに追加する関数
-  const addMessage = async (
-    newMessage: Omit<Message, "id" | "likes" | "replies">
-  ) => {
-    try {
-      const response = await fetch("/api/send_message", {
-        method: "POST", // メッセージを送信するHTTPメソッド
-        headers: {
-          "Content-Type": "application/json",
-        }, // JSON形式でデータを送信
-        body: JSON.stringify(newMessage), // 新しいメッセージをJSON形式で送信
-      });
-
-      if (!response.ok) {
-        // サーバーエラーが発生した場合
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const savedMessage = await response.json(); // サーバーから保存されたメッセージを取得
-
-      setMessages((prevMessages) => [...prevMessages, { ...savedMessage }]); // 取得したメッセージをリストに追加
-    } catch (error) {
-      console.error("メッセージ追加エラー:", error);
-      setError(
-        error instanceof Error ? error.message : "不明なエラーが発生しました"
-      );
-    }
-  };
-
   // メッセージに返信を追加する関数
   const addReply = (messageId: number, reply: Omit<Reply, "id">) => {
     setMessages((prevMessages) =>
@@ -180,6 +151,7 @@ export default function MessageApp() {
       {selectedMessage && (
         <MessageDetailsDialog
           message={selectedMessage}
+          organizationId={organizationId}
           onClose={() => setSelectedMessage(null)}
           onReply={(reply) => addReply(selectedMessage.message_id, reply)}
         />

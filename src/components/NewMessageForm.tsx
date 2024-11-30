@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/select"; // セレクトコンポーネントをインポート
 import { Textarea } from "@/components/ui/textarea"; // テキストエリアコンポーネントをインポート
 import { predefinedMessages } from "@/components/constants"; // 定義済みメッセージをインポート
-import { Message } from "@/components/types"; // Message型をインポート
 import { Products } from "@/components/types";
 
 // 型定義
