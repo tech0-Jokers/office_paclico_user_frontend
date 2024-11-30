@@ -3,7 +3,6 @@
 import Image from "next/image"; // 画像コンポーネントをインポート
 import { useState, useEffect } from "react"; // useStateとuseEffectフックをインポート
 import { Button } from "@/components/ui/button"; // ボタンコンポーネントをインポート
-import { Input } from "@/components/ui/input"; // 入力コンポーネントをインポート
 import { Label } from "@/components/ui/label"; // ラベルコンポーネントをインポート
 import {
   Select,
@@ -24,7 +23,7 @@ interface User {
 }
 
 interface NewMessageFormProps {
-  onSubmit: (message: Omit<Message, "id" | "likes" | "replies">) => void;
+  onSubmit: () => void;
   onClose: () => void;
   organizationId: number; // 追加
 }
@@ -37,7 +36,6 @@ const ErrorMessage = ({ error }: { error: string | null }) => {
 
 // メッセージ送信フォームのコンポーネント
 export default function NewMessageForm({
-  onSubmit,
   onClose,
   organizationId,
 }: NewMessageFormProps) {
@@ -52,9 +50,9 @@ export default function NewMessageForm({
     "select"
   ); // メッセージ入力方法の選択
   const [products, setProducts] = useState<Products[]>([]); // お菓子のデータを格納する状態変数
-  const [selectedProduct, setSelectedProduct] = useState<Products | null>(null); // 選択されたお菓子のデータを格納する状態変数
-  const [selectedSendUser, setSelectedSendUser] = useState<User | null>(null); // 送信先ユーザー情報
-  const [selectedFromUser, setSelectedFromUser] = useState<User | null>(null); // 送信先ユーザー情報
+  const [selectedProduct] = useState<Products | null>(null); // 選択されたお菓子のデータを格納する状態変数
+  const [selectedSendUser] = useState<User | null>(null); // 送信先ユーザー情報
+  const [selectedFromUser] = useState<User | null>(null); // 送信先ユーザー情報
   const [error, setError] = useState<string | null>(null); // エラーメッセージを保持するステート
 
   // コンポーネントのマウント時にデータを取得します。
@@ -235,7 +233,6 @@ export default function NewMessageForm({
         </div>
       )}
 
-      {/* 送信先フィールド */}
       {/* メッセージを送る相手の選択 */}
       <div>
         <Label htmlFor="userSelect">送る相手を選んでください</Label>

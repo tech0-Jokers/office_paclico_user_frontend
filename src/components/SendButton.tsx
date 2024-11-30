@@ -4,27 +4,20 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
   DialogTitle,
   DialogDescription,
   DialogTrigger,
 } from "@/components/ui/dialog";
 import NewMessageForm from "@/components/NewMessageForm"; // 新しいメッセージフォームをインポート
-import { Message } from "@/components/types"; // 型定義をインポート
 
 // プロパティの型を定義
 interface SendButtonProps {
   onClick: () => void;
-  addMessage: (newMessage: Omit<Message, "id" | "likes" | "replies">) => void;
   organizationId: number; // 追加
 }
 
 // 送信ボタンコンポーネント
-const SendButton: React.FC<SendButtonProps> = ({
-  onClick,
-  addMessage,
-  organizationId,
-}) => {
+const SendButton: React.FC<SendButtonProps> = ({ onClick, organizationId }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleOpen = () => setIsOpen(true);
@@ -48,10 +41,12 @@ const SendButton: React.FC<SendButtonProps> = ({
           <DialogTitle>新しいメッセージ</DialogTitle>
           <DialogDescription>必要な情報を入力してください。</DialogDescription>
           <NewMessageForm
-            onSubmit={addMessage}
+            onSubmit={() => {
+              // handle submit logic here
+            }}
             onClose={handleClose}
             organizationId={organizationId}
-          />{" "}
+          />
           {/* 追加 */}
         </DialogContent>
       </Dialog>
