@@ -57,9 +57,6 @@ export default function NewMessageForm({
   const [selectedFromUser, setSelectedFromUser] = useState<User | null>(null); // 送信先ユーザー情報
   const [error, setError] = useState<string | null>(null); // エラーメッセージを保持するステート
 
-  // 組織IDを定義します（仮に1を設定しています。実際の値に置き換えてください）
-  // const organizationId = 1;
-
   // コンポーネントのマウント時にデータを取得します。
   useEffect(() => {
     if (organizationId) {
