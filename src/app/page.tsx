@@ -5,10 +5,17 @@ import { useState, useEffect } from "react";
 import QRCodeList from "@/components/QRCodeList"; // QRコード一覧を表示するコンポーネント
 import AmbassadorShop from "@/components/AmbassadorShop"; // ショップ画面のコンポーネント
 
+import { useOrganization } from "@/context/OrganizationContext";
+import { useQueryParams } from "@/context/useQueryParams";
+
 export default function HomePage() {
   const { selectedOrgId, setSelectedOrgId } = useSelectedOrg(); // コンテキストから状態を取得
   const [qrData, setQrData] = useState([]); // QRコードデータを保持するステート
   const [isLoading, setIsLoading] = useState(true); // ローディング状態
+  const { organizationId, setOrganizationId } = useOrganization();
+
+  // クエリパラメータからorganization_idを取得
+  useQueryParams(setOrganizationId);
 
   useEffect(() => {
     const fetchQrData = async () => {
@@ -48,10 +55,23 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-purple-100 p-8">
       <h1 className="text-3xl font-bold text-purple-800 mb-8">OfficePaclico</h1>
-      <h2 className="text-2xl font-bold mb-4">
-        あなたが所属するオフィスを選んでください
-      </h2>
-      <QRCodeList qrData={qrData} onSelect={setSelectedOrgId} />
+      <div className="min-h-screen bg-purple-100 p-8">
+        <div className="max-w-3xl mx-auto">
+          {organizationId ? (
+            <p className="text-lg text-purple-600">
+              Organization ID: {organizationId}
+            </p>
+          ) : (
+            <p className="text-lg text-purple-600">
+              Organization ID not found.
+            </p>
+          )}
+        </div>
+        <h2 className="text-2xl font-bold mb-4">
+          あなたが所属するオフィスを選んでください
+        </h2>
+        <QRCodeList qrData={qrData} onSelect={setSelectedOrgId} />
+      </div>
     </div>
   );
 }
