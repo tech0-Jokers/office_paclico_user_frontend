@@ -2,6 +2,7 @@
 import { useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation"; // Next.js 13以降でのクエリパラメータ取得
 
+// クエリパラメータを管理するカスタムフック
 export const useQueryParams = (setOrganizationId, setQrGenerationToken) => {
   const searchParams = useSearchParams(); // クエリパラメータを取得
   const isInitialMount = useRef(true); // 初回マウント判定

@@ -26,7 +26,7 @@ const Card: React.FC<CardProps> = ({ onClick }) => {
   return (
     <div className="border rounded-lg p-4 shadow-md text-center bg-white">
       {/* カードのタイトル部分 */}
-      <h2 className="text-lg font-semibold mb-4"></h2>
+      <h2 className="text-lg font-semibold mb-4">アプリ選択</h2>
 
       {/* ボタン部分 */}
       <div className="flex flex-col space-y-4">

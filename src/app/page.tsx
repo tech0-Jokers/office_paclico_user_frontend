@@ -4,8 +4,20 @@ import { useState, useEffect } from "react";
 import { Card } from "@/components/Card"; // カードコンポーネントをインポート
 import { useOrganization } from "@/context/OrganizationContext"; // 組織情報を管理するContext
 import { useQueryParams } from "@/context/useQueryParams"; // クエリパラメータを取得するカスタムフック
+import { Suspense } from "react"; // Suspenseをインポート
 
+// ホームページのメインコンポーネント
 export default function HomePage() {
+  return (
+    // Suspenseでメインコンポーネントをラップ
+    <Suspense fallback={<div>Loading...</div>}>
+      <MainComponent />
+    </Suspense>
+  );
+}
+
+// メインコンポーネント
+function MainComponent() {
   // ローディング状態を管理するstate
   const [isLoading, setIsLoading] = useState(true);
 
@@ -87,7 +99,7 @@ export default function HomePage() {
       console.log("fetchQrData を実行中...");
       fetchQrData();
     }
-  }, [organizationId, qrGenerationToken]); // 依存配列：クエリパラメータが変化した場合に再実行
+  }, [organizationId, qrGenerationToken, apiUrl]); // 依存配列にapiUrlを追加
 
   // ローディング中の画面
   if (isLoading) return <div>Loading...</div>;
