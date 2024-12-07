@@ -11,7 +11,7 @@ import { Card } from "@/components/Card"; // カードを表示するコンポ�
 export default function HomePage() {
   //  const { selectedOrgId, setSelectedOrgId } = useSelectedOrg(); // コンテキストから状態を取得
   const [isLoading, setIsLoading] = useState(true); // ローディング状態
-  const { organizationId, setOrganizationId } = useOrganization();
+  const { setOrganizationId } = useOrganization();
 
   // クエリパラメータからorganization_idを取得
   useQueryParams(setOrganizationId);
