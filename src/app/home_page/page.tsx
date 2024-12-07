@@ -2,7 +2,6 @@
 
 //import { useSelectedOrg } from "@/context/SelectedOrgContext"; // コンテキストから状態を取得
 import { useState, useEffect } from "react";
-import AmbassadorShop from "@/components/AmbassadorShop"; // ショップ画面のコンポーネント
 
 import { useOrganization } from "@/context/OrganizationContext";
 import { useQueryParams } from "@/context/useQueryParams";
@@ -46,7 +45,6 @@ export default function HomePage() {
           あなたが所属するオフィスを選んでください
         </h2>
         <Card
-          organizationId={organizationId}
           onClick={() => {
             /* 適切な処理を追加 */
           }}

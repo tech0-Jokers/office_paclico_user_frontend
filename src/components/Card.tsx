@@ -6,12 +6,11 @@ import { useRouter } from "next/navigation"; // next/navigationをインポー�
 
 // カードのプロパティ型
 interface CardProps {
-  organizationId: string; // ラベル
   onClick: () => void; // ボタンがクリックされたときの処理
 }
 
 // カードコンポーネント
-const Card: React.FC<CardProps> = ({ organizationId, onClick }) => {
+const Card: React.FC<CardProps> = ({ onClick }) => {
   const router = useRouter(); // useRouterフックを使用
 
   const handleMessageAppClick = () => {

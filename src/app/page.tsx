@@ -106,7 +106,7 @@ export default function HomePage() {
           <h2 className="text-2xl font-bold mb-4">
             あなたが所属する組織: {organizationName}
           </h2>
-          <Card organizationId={organizationId} onClick={() => {}} />
+          <Card onClick={() => {}} />
         </div>
       ) : (
         // カード画面が無効な場合のメッセージ
