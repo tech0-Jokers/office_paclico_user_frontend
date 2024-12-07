@@ -27,15 +27,7 @@ const Card: React.FC<CardProps> = ({ organizationId, onClick }) => {
   return (
     <div className="border rounded-lg p-4 shadow-md text-center bg-white">
       {/* カードのタイトル部分 */}
-      <h2 className="text-lg font-semibold mb-4">
-        {organizationId ? (
-          <p className="text-lg text-purple-600">
-            Organization ID: {organizationId}
-          </p>
-        ) : (
-          <p className="text-lg text-purple-600">Organization ID not found.</p>
-        )}
-      </h2>
+      <h2 className="text-lg font-semibold mb-4"></h2>
 
       {/* ボタン部分 */}
       <div className="flex flex-col space-y-4">
