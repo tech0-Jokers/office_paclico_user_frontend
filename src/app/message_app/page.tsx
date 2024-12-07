@@ -15,7 +15,6 @@ export default function MessageApp() {
   const [error, setError] = useState<string | null>(null); // エラーを管理
   const [loading, setLoading] = useState<boolean>(false); // ローディング状態を管理
   const { organizationId } = useOrganization(); // ContextからorganizationIdを取得
-  console.log(organizationId);
 
   // サーバーからメッセージを取得する関数
   const fetchMessages = useCallback(async () => {
