@@ -1,3 +1,4 @@
+"use client"; // このコンポーネントはクライアントサイドで動作します
 import { useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation"; // Next.js 13以降でのクエリパラメータ取得
 
