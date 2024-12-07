@@ -1,11 +1,12 @@
 "use client"; // クライアントサイドでレンダリングすることを指定
 
 import { useEffect, useState, useCallback } from "react";
-import MessageDetailsDialog from "./MessageDetailsDialog"; // メッセージ詳細を表示するダイアログ
+import MessageDetailsDialog from "@/components/MessageDetailsDialog"; // メッセージ詳細を表示するダイアログ
 import SendMessageApp from "@/components/SendMessageApp"; // メッセージ送信フォーム
 import MessageCard from "@/components/MessageCard";
 import { Message, Reply } from "@/components/types"; // 型定義をインポート
 import fetchMessagesData from "@/components/fetchMessagesData"; // fetchDataをインポート
+import { useOrganization } from "@/context/OrganizationContext";
 
 // メインのアプリコンポーネント
 export default function MessageApp() {
@@ -13,7 +14,8 @@ export default function MessageApp() {
   const [selectedMessage, setSelectedMessage] = useState<Message | null>(null); // 選択されたメッセージを管理
   const [error, setError] = useState<string | null>(null); // エラーを管理
   const [loading, setLoading] = useState<boolean>(false); // ローディング状態を管理
-  const [organizationId, setOrganizationId] = useState<number>(1); // 組織IDを管理
+  const { organizationId } = useOrganization(); // ContextからorganizationIdを取得
+  console.log(organizationId);
 
   // サーバーからメッセージを取得する関数
   const fetchMessages = useCallback(async () => {
@@ -106,28 +108,14 @@ export default function MessageApp() {
       <h1 className="text-3xl font-bold text-purple-800 mb-8">
         メッセージアプリ
       </h1>
-
+      <p className="text-lg text-purple-600">
+        Organization ID: {organizationId}
+      </p>
       {/* ローディング中の表示 */}
       {loading && <p>メッセージを取得中です...</p>}
 
       {/* エラーがある場合に表示 */}
       {error && <p className="text-red-500">{error}</p>}
-
-      {/* 組織ID選択プルダウン */}
-      <div className="flex items-center mb-4">
-        <label htmlFor="organization-select" className="text-purple-800 mr-2">
-          組織を選択:
-        </label>
-        <select
-          id="organization-select"
-          className="p-2 border border-purple-300 rounded"
-          onChange={(e) => setOrganizationId(parseInt(e.target.value, 10))}
-        >
-          <option value="1">組織1</option>
-          <option value="2">組織2</option>
-          <option value="3">組織3</option>
-        </select>
-      </div>
 
       {/* 新しいメッセージ送信フォーム */}
       <div className="flex justify-start mb-4">

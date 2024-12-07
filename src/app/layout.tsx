@@ -4,7 +4,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import Footer from "@/components/footer";
 import Head from "next/head";
-import { SelectedOrgProvider } from "@/context/SelectedOrgContext"; // コンテキストプロバイダーをインポート
+//import { SelectedOrgProvider } from "@/context/SelectedOrgContext"; // コンテキストプロバイダーをインポート
 import { OrganizationProvider } from "@/context/OrganizationContext";
 
 const geistSans = localFont({
@@ -18,9 +18,7 @@ const geistMono = localFont({
   weight: "100 900",
 });
 
-function Providers({ children }: { children: React.ReactNode }) {
-  return <SelectedOrgProvider>{children}</SelectedOrgProvider>;
-}
+console.log("Layout mounted");
 
 export default function RootLayout({
   children,
@@ -36,10 +34,8 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <OrganizationProvider>
-          <Providers>
-            {children}
-            <Footer />
-          </Providers>
+          {children}
+          <Footer />
         </OrganizationProvider>
       </body>
     </html>

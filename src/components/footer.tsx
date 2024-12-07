@@ -2,19 +2,26 @@
 
 import { Button } from "@/components/ui/button"; // ボタンコンポーネントをインポート
 import { MessageCircleHeart, Pickaxe, House } from "lucide-react"; // アイコンをインポート
-import { useSelectedOrg } from "@/context/SelectedOrgContext"; // コンテキストフックをインポート
 import { useRouter } from "next/navigation"; // Next.jsのルーターを使用
+import { useOrganization } from "@/context/OrganizationContext";
 
 // IconButtonコンポーネントのプロパティ型
 type IconButtonProps = {
   icon: React.ElementType; // アイコンの型（Reactのコンポーネント型）
   label: string; // ボタンのラベル
-  onClick?: () => void; // ボタンがクリックされたときの処理（省略可能）
+  onClick?: (organizationId?: string) => void; // ボタンがクリックされたときの処理
   href?: string; // リンク先のURL（省略可能）
+  organizationId?: string; // 渡すorganizationId
 };
 
 // アイコン付きボタンコンポーネント
-function IconButton({ icon: Icon, label, onClick, href }: IconButtonProps) {
+function IconButton({
+  icon: Icon,
+  label,
+  onClick,
+  href,
+  organizationId,
+}: IconButtonProps) {
   // ボタンやリンクに共通するスタイル設定
   const commonProps = {
     className:
@@ -23,15 +30,17 @@ function IconButton({ icon: Icon, label, onClick, href }: IconButtonProps) {
     "aria-label": label, // スクリーンリーダー用ラベル
   };
 
-  // hrefが指定されている場合はリンクとして動作
   return href ? (
     <a href={href} {...commonProps}>
       <Icon style={{ width: "32px", height: "32px" }} /> {/* アイコンを表示 */}
       <span className="text-xs">{label}</span> {/* ボタンラベルを表示 */}
     </a>
   ) : (
-    // hrefがない場合は通常のボタンとして動作
-    <Button variant="ghost" onClick={onClick} {...commonProps}>
+    <Button
+      variant="ghost"
+      onClick={() => onClick && onClick(organizationId)} // props経由でorganizationIdを渡す
+      {...commonProps}
+    >
       <Icon style={{ width: "32px", height: "32px" }} /> {/* アイコンを表示 */}
       <span className="text-xs">{label}</span> {/* ボタンラベルを表示 */}
     </Button>
@@ -40,8 +49,8 @@ function IconButton({ icon: Icon, label, onClick, href }: IconButtonProps) {
 
 // フッターコンポーネント
 export default function Footer() {
-  const { setSelectedOrgId } = useSelectedOrg(); // 状態リセット関数を取得
   const router = useRouter(); // Next.jsのルーターを使用
+  const { organizationId } = useOrganization(); // ContextからorganizationIdを取得
 
   return (
     <div className="fixed bottom-0 w-full z-50 bg-background p-1">
@@ -52,7 +61,6 @@ export default function Footer() {
           icon={House}
           label="ホーム"
           onClick={() => {
-            setSelectedOrgId(null); // 状態をリセット
             router.push("/"); // ホームページに遷移
           }}
         />
@@ -60,7 +68,13 @@ export default function Footer() {
         <IconButton
           icon={MessageCircleHeart}
           label="Message"
-          href="/message_app"
+          organizationId={organizationId} // organizationIdをpropsで渡す
+          onClick={(id) => {
+            if (id) {
+              // 必要に応じてルーティングなどの処理を追加
+              router.push("/message_app");
+            }
+          }}
         />
         {/* 開発中ボタン */}
         <IconButton icon={Pickaxe} label="開発中" href="/development" />
