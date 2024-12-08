@@ -74,6 +74,7 @@ export default function MessageDetailsDialog({
     comment_user_id: number;
     comment_user_name: string;
     message_content: string;
+    from_name: string;
     from_name_input: string;
   }) => {
     const requestUrl = `/api/add_comments`; // 返信を送るAPIエンドポイント
@@ -102,7 +103,7 @@ export default function MessageDetailsDialog({
   const addReply = async (
     messageId: number,
     userName: string,
-    replyContent: Omit<Reply, "id" | "send_date">
+    replyContent: Omit<Reply, "id" | "send_date"> & { from_name: string }
   ) => {
     console.log("全ユーザー:", users);
     console.log("選択されたユーザー名:", userName);
