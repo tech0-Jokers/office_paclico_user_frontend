@@ -24,13 +24,18 @@ export default function ReplyForm({
   // フォーム送信時の処理
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault(); // デフォルトのフォーム送信を防ぐ
+
     onSubmit({
-      from_name, // `from_name`を追加
-      from_name_input,
-      content,
+      from_name, // 返信者の名前
+      from_name_input, // 手動入力された名前
+      content, // メッセージ内容
+      comment_user_name_manual_input: from_name_input || "", // 手動入力名を設定
+      send_date: new Date().toISOString(), // 現在時刻をISO形式で設定
+      comment_user_name: from_name || "", // グループ名を設定
     });
-    setFrom_name(""); // 返信者の名前を空にする
-    setContent(""); // 返信内容を空にする
+
+    setFrom_name(""); // フィールドをリセット
+    setContent(""); // フィールドをリセット
   };
 
   return (
