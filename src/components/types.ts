@@ -22,16 +22,21 @@ export interface ReplyComment {
   reply_comment_id: number; // 返信コメントID
   comment_user_id: number; // コメントユーザーID
   comment_user_name: string; // コメントユーザー名
+  comment_user_name_manual_input: string; // コメントユーザー名
   message_content: string; // コメント内容
   send_date: Date | null; // コメント送信日時
 }
 
 // 返信の型
-export type Reply = {
+export interface Reply {
   id: number;
-  from: string;
+  send_date: string;
   content: string;
-};
+  from_name: string; // 追加
+  from_name_input: string;
+  comment_user_name: string;
+  comment_user_name_manual_input: string;
+}
 
 // チョコレートの型
 export type Chocolate = {

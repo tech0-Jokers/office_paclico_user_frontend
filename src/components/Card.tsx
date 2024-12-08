@@ -36,7 +36,7 @@ const Card: React.FC<CardProps> = ({ onClick }) => {
           onClick={handleMessageAppClick} // handleMessageAppClickを使用
           aria-label="Message Appページに移動" // アクセシビリティ対応
         >
-          メッセージページへ
+          メッセージを贈る
         </Button>
 
         {/* Ambassador Shop ボタン */}
@@ -45,7 +45,7 @@ const Card: React.FC<CardProps> = ({ onClick }) => {
           onClick={handleAmbassadorShopClick} // handleAmbassadorShopClickを使用
           aria-label="Ambassador Shopページに移動" // アクセシビリティ対応
         >
-          アンバサダーショップへ
+          お菓子を購入する
         </Button>
       </div>
     </div>

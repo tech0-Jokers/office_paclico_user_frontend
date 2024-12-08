@@ -6,15 +6,25 @@ export async function POST(request: Request) {
     // リクエストボディを取得しJSONとしてパース
     const body = await request.json();
 
-    const { message_id, from, user_name, message } = body;
+    const {
+      message_id,
+      comment_user_id,
+      comment_user_name_manual_input,
+      message_content,
+    } = body;
 
     // 必須フィールドのバリデーション
-    if (!message_id || !from || !message || !user_name) {
+    if (
+      !message_id ||
+      !comment_user_id ||
+      !message_content ||
+      !comment_user_name_manual_input
+    ) {
       console.error("必須フィールドが不足しています。", {
         message_id,
-        from,
-        user_name,
-        message,
+        comment_user_id,
+        comment_user_name_manual_input,
+        message_content,
       });
       return NextResponse.json(
         { error: "すべての必須フィールドを入力してください。" },
@@ -22,10 +32,10 @@ export async function POST(request: Request) {
       );
     }
 
-    if (isNaN(message_id) || isNaN(from)) {
+    if (isNaN(message_id) || isNaN(comment_user_id)) {
       console.error("送信データの形式が正しくありません。", {
         message_id,
-        from,
+        comment_user_id,
       });
       return NextResponse.json(
         { error: "送信データの形式が正しくありません。" },
@@ -36,9 +46,9 @@ export async function POST(request: Request) {
     // 外部API用のリクエストデータ
     const requestData = {
       message_id: parseInt(message_id, 10),
-      comment_user_id: parseInt(from, 10),
-      comment_user_name_manual_input: user_name,
-      message_content: message,
+      comment_user_id: parseInt(comment_user_id, 10),
+      comment_user_name_manual_input: comment_user_name_manual_input,
+      message_content: message_content,
     };
 
     // 環境変数から外部APIのURLを取得

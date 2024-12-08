@@ -46,6 +46,7 @@ const fetchMessagesData = async (
         reply_comment_id: reply.reply_comment_id, // 返信コメントのID
         comment_user_id: reply.comment_user_id, // コメントユーザーID
         comment_user_name: reply.comment_user_name, // コメントユーザー名
+        comment_user_name_manual_input: reply.comment_user_name_manual_input, // コメントユーザー名
         message_content: reply.message_content, // コメント内容
         send_date: reply.send_date ? new Date(reply.send_date) : null, // コメント送信日時
       })),
