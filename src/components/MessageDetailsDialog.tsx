@@ -10,10 +10,10 @@ import ReplyForm from "@/components/ReplyForm"; // 返信フォームコンポ�
 import { useState, useEffect } from "react"; // Reactフックをインポート
 import { Message, Reply } from "@/components/types"; // 型定義をインポート
 
-// 型定義
+// ユーザー情報の型定義
 interface User {
-  user_id: number;
-  user_name: string;
+  user_id: number; // ユーザーID
+  user_name: string; // ユーザー名
 }
 
 // 選択されたメッセージの詳細を表示するダイアログコンポーネント
@@ -23,76 +23,78 @@ export default function MessageDetailsDialog({
   onClose,
   onReply,
 }: {
-  message: Message;
-  organizationId: number;
-  onClose: () => void;
-  onReply: (reply: Omit<Reply, "id">) => void;
+  message: Message; // メッセージデータ
+  organizationId: number; // 組織ID
+  onClose: () => void; // ダイアログを閉じる関数
+  onReply: (reply: Omit<Reply, "id">) => void; // 返信を親コンポーネントに通知する関数
 }) {
+  // ステート（状態管理）
   const [users, setUsers] = useState<User[]>([]); // ユーザー情報を保持するステート
   const [error, setError] = useState<string | null>(null); // エラーメッセージを保持するステート
   const [selectedMessage, setSelectedMessage] = useState<Message | null>(
     message || null
   ); // 選択されたメッセージを状態として保持
 
-  // コンポーネントのマウント時にユーザー情報を取得
+  // 初回レンダリング時にユーザー情報を取得
   useEffect(() => {
     if (organizationId) {
-      fetchUsers(organizationId);
+      fetchUsers(organizationId); // 組織IDを使ってユーザー情報を取得
     }
   }, [organizationId]);
 
   // APIからユーザー情報を取得する関数
   const fetchUsers = async (organizationId: number) => {
-    const requestUrl = `/api/user_information/${organizationId}`;
+    const requestUrl = `/api/user_information/${organizationId}`; // APIエンドポイント
 
     try {
-      const response = await fetch(requestUrl);
+      const response = await fetch(requestUrl); // APIを呼び出し
 
       if (!response.ok) {
         throw new Error(`ユーザー情報の取得に失敗しました: ${response.status}`);
       }
 
-      const data = await response.json();
+      const data = await response.json(); // レスポンスをJSONとしてパース
 
       if (!Array.isArray(data)) {
         throw new Error("APIレスポンスが配列形式ではありません。");
       }
 
-      setUsers(data); // ユーザー情報をセット
-      setError(null); // エラーが発生しなかった場合にリセット
+      setUsers(data); // ユーザー情報をステートに保存
+      setError(null); // エラーをクリア
     } catch (error) {
-      console.error("ユーザー情報取得エラー:", error); // コンソールにログ
-      setUsers([]); // エラー時は空のリストを設定
+      console.error("ユーザー情報取得エラー:", error); // エラーメッセージをコンソールに表示
+      setUsers([]); // ユーザーリストを空にリセット
       setError("ユーザー情報の取得に失敗しました。");
     }
   };
 
-  // 返信をエンドポイントに送る関数
+  // 返信をエンドポイントに送信する関数
   const sendReplyToBackend = async (replyContent: {
     message_id: number;
     comment_user_id: number;
+    comment_user_name: string;
     message_content: string;
-    comment_user_name_manual_input: string;
+    from_name_input: string;
   }) => {
-    const requestUrl = `/api/add_comments`;
+    const requestUrl = `/api/add_comments`; // 返信を送るAPIエンドポイント
     try {
       const response = await fetch(requestUrl, {
-        method: "POST",
+        method: "POST", // POSTメソッドで送信
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "application/json", // JSON形式でデータを送信
         },
-        body: JSON.stringify(replyContent),
+        body: JSON.stringify(replyContent), // 送信するデータをJSON形式に変換
       });
 
       if (!response.ok) {
         throw new Error("返信メッセージの送信に失敗しました");
       }
 
-      const result = await response.json();
-      return result.comment;
+      const result = await response.json(); // サーバーのレスポンスをパース
+      return result.comment; // 新しく追加された返信を返す
     } catch (error) {
-      console.error("サーバーエラー:", error);
-      throw error;
+      console.error("サーバーエラー:", error); // エラーをコンソールに表示
+      throw error; // エラーを呼び出し元に投げる
     }
   };
 
@@ -102,15 +104,25 @@ export default function MessageDetailsDialog({
     userName: string,
     replyContent: Omit<Reply, "id" | "send_date">
   ) => {
+    console.log("全ユーザー:", users);
+    console.log("選択されたユーザー名:", userName);
+
     try {
+      // `from_name`を基にユーザーIDを検索
+      const matchedUser = users.find(
+        (user) => user.user_name === replyContent.from_name
+      );
+
       // サーバーに送信するデータを構築
       const replyData = {
-        message_id: messageId,
-        comment_user_id:
-          users.find((user) => user.user_name === userName)?.user_id || 0, // 選択されたユーザーのIDを取得
-        comment_user_name_manual_input: replyContent.from_name_input, // ユーザー名
-        message_content: replyContent.content, // フォームからの返信内容
+        message_id: messageId, // メッセージID
+        comment_user_id: matchedUser?.user_id || 0, // 一致するユーザーのID
+        comment_user_name: replyContent.from_name, // ユーザー名
+        comment_user_name_manual_input: replyContent.from_name_input, // 入力されたユーザー名
+        message_content: replyContent.content, // 返信内容
       };
+
+      console.log("送信データ:", replyData); // デバッグ用に送信データを表示
 
       // サーバーに送信
       const newReply = await sendReplyToBackend(replyData);
@@ -133,10 +145,10 @@ export default function MessageDetailsDialog({
 
   return (
     <Dialog
-      open={!!selectedMessage}
+      open={!!selectedMessage} // ダイアログを開く条件
       onOpenChange={() => {
-        setSelectedMessage(null);
-        onClose();
+        setSelectedMessage(null); // メッセージ選択をクリア
+        onClose(); // ダイアログを閉じる
       }}
     >
       <DialogContent
@@ -175,7 +187,9 @@ export default function MessageDetailsDialog({
                 <table className="table-auto w-full border-collapse border border-purple-200 text-sm">
                   <thead>
                     <tr className="bg-purple-100">
-                      <th className="border border-purple-200 px-4 py-2">ID</th>
+                      <th className="border border-purple-200 px-4 py-2">
+                        グループ
+                      </th>
                       <th className="border border-purple-200 px-4 py-2">
                         名前
                       </th>
@@ -191,10 +205,10 @@ export default function MessageDetailsDialog({
                     {selectedMessage.reply_comments.map((reply) => (
                       <tr key={reply.reply_comment_id}>
                         <td className="border border-purple-200 px-4 py-2 text-purple-700">
-                          {reply.comment_user_id}
+                          {reply.comment_user_name}
                         </td>
                         <td className="border border-purple-200 px-4 py-2 text-purple-700">
-                          {reply.comment_user_name}
+                          {reply.comment_user_name_manual_input}
                         </td>
                         <td className="border border-purple-200 px-4 py-2 text-purple-700">
                           {reply.message_content}

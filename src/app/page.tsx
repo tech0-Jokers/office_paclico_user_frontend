@@ -56,7 +56,7 @@ function MainComponent() {
         }
 
         // サーバーにPOSTリクエストを送信
-        const response = await fetch(`${apiUrl}/validate-token`, {
+        const response = await fetch(`${apiUrl}/validate-token/`, {
           method: "POST", // HTTPメソッドをPOSTに設定
           headers: {
             "Content-Type": "application/json", // リクエストのデータ形式をJSONに指定
