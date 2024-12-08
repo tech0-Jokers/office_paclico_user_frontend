@@ -24,7 +24,11 @@ export default function ReplyForm({
   // フォーム送信時の処理
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault(); // デフォルトのフォーム送信を防ぐ
-    onSubmit({ from_name, from_name_input, content }); // 親コンポーネントに返信内容を送信
+    onSubmit({
+      from_name, // `from_name`を追加
+      from_name_input,
+      content,
+    });
     setFrom_name(""); // 返信者の名前を空にする
     setContent(""); // 返信内容を空にする
   };

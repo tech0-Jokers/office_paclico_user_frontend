@@ -28,11 +28,15 @@ export interface ReplyComment {
 }
 
 // 返信の型
-export type Reply = {
+export interface Reply {
   id: number;
-  from_name_input: string;
+  send_date: string;
   content: string;
-};
+  from_name: string; // 追加
+  from_name_input: string;
+  comment_user_name: string;
+  comment_user_name_manual_input: string;
+}
 
 // チョコレートの型
 export type Chocolate = {
