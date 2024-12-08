@@ -43,12 +43,13 @@ const fetchMessagesData = async (
       count_of_likes: msg.count_of_likes, // 「いいね」の数
       product_image_url: msg.product_image_url || null, // 商品画像URL（ない場合はnull）
       reply_comments: (msg.reply_comments || []).map((reply: ReplyComment) => ({
-        reply_comment_id: reply.reply_comment_id,
-        comment_user_id: reply.comment_user_id,
-        comment_user_name: reply.comment_user_name,
-        message_content: reply.message_content,
-        send_date: reply.send_date ? new Date(reply.send_date) : null,
+        reply_comment_id: reply.reply_comment_id, // 返信コメントのID
+        comment_user_id: reply.comment_user_id, // コメントユーザーID
+        comment_user_name: reply.comment_user_name, // コメントユーザー名
+        message_content: reply.message_content, // コメント内容
+        send_date: reply.send_date ? new Date(reply.send_date) : null, // コメント送信日時
       })),
+      reply_count: msg.reply_comments?.length || 0, // 返信メッセージの数
     }))
     .sort((a: Message, b: Message) => {
       // メッセージを送信日時で新しい順にソート

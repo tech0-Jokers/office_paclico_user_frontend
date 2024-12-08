@@ -58,7 +58,7 @@ export default function MessageDetailsDialog({
         throw new Error("APIレスポンスが配列形式ではありません。");
       }
 
-      setUsers(data);
+      setUsers(data); // ユーザー情報をセット
       setError(null); // エラーが発生しなかった場合にリセット
     } catch (error) {
       console.error("ユーザー情報取得エラー:", error); // コンソールにログ
@@ -68,24 +68,67 @@ export default function MessageDetailsDialog({
   };
 
   // 返信を追加する関数
-  const addReply = (
-    messageId: number,
-    useName: string,
-    replyContent: Omit<Reply, "id">
-  ) => {
-    const newReply: Reply = {
-      id: Date.now(),
-      ...replyContent,
-    };
-
-    if (selectedMessage) {
-      setSelectedMessage({
-        ...selectedMessage,
-        replies: [...selectedMessage.replies, newReply],
+  const sendReplyToBackend = async (replyContent: {
+    message_id: number;
+    comment_user_id: number;
+    message_content: string;
+    comment_user_name: string;
+  }) => {
+    const requestUrl = `/api/add_comments/`;
+    try {
+      const response = await fetch(requestUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(replyContent),
       });
-    }
 
-    onReply(newReply);
+      if (!response.ok) {
+        throw new Error("返信メッセージの送信に失敗しました");
+      }
+
+      const result = await response.json();
+      return result.comment;
+    } catch (error) {
+      console.error("サーバーエラー:", error);
+      throw error;
+    }
+  };
+
+  // 返信を追加する関数
+  const addReply = async (
+    messageId: number,
+    userName: string,
+    replyContent: Omit<Reply, "id" | "send_date">
+  ) => {
+    try {
+      // サーバーに送信するデータを構築
+      const replyData = {
+        message_id: messageId,
+        comment_user_id:
+          users.find((user) => user.user_name === userName)?.user_id || 0, // 選択されたユーザーのIDを取得
+        comment_user_name: userName, // ユーザー名
+        message_content: replyContent.content, // フォームからの返信内容
+      };
+
+      // サーバーに送信
+      const newReply = await sendReplyToBackend(replyData);
+
+      // ローカルステートに反映
+      if (selectedMessage) {
+        setSelectedMessage({
+          ...selectedMessage,
+          reply_comments: [...selectedMessage.reply_comments, newReply],
+        });
+      }
+
+      // 親コンポーネントに通知
+      onReply(newReply);
+    } catch (error) {
+      console.error("返信の追加に失敗しました:", error);
+      setError("返信の送信に失敗しました。再度お試しください。");
+    }
   };
 
   return (
@@ -110,6 +153,7 @@ export default function MessageDetailsDialog({
           こちらは選択されたメッセージの詳細です。
         </DialogDescription>
 
+        {/* メッセージ詳細の表示 */}
         <div className="space-y-4">
           {selectedMessage && (
             <div>
@@ -127,31 +171,66 @@ export default function MessageDetailsDialog({
               </p>
 
               <div className="mt-4">
-                <h3 className="font-semibold mb-2">返信</h3>
-                {selectedMessage.reply_comments.map((reply) => (
-                  <div
-                    key={reply.reply_comment_id}
-                    className="bg-purple-50 p-2 rounded-md mb-2"
-                  >
-                    <p className="font-semibold text-sm text-purple-700">
-                      {reply.comment_user_id}:{reply.comment_user_name}:
-                      {reply.message_content}:{reply.send_date?.toString()}
-                    </p>
-                  </div>
-                ))}
+                <h3 className="font-semibold mb-2">返信メッセージ</h3>
+                <table className="table-auto w-full border-collapse border border-purple-200 text-sm">
+                  <thead>
+                    <tr className="bg-purple-100">
+                      <th className="border border-purple-200 px-4 py-2">ID</th>
+                      <th className="border border-purple-200 px-4 py-2">
+                        名前
+                      </th>
+                      <th className="border border-purple-200 px-4 py-2">
+                        内容
+                      </th>
+                      <th className="border border-purple-200 px-4 py-2">
+                        送信日時
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {selectedMessage.reply_comments.map((reply) => (
+                      <tr key={reply.reply_comment_id}>
+                        <td className="border border-purple-200 px-4 py-2 text-purple-700">
+                          {reply.comment_user_id}
+                        </td>
+                        <td className="border border-purple-200 px-4 py-2 text-purple-700">
+                          {reply.comment_user_name}
+                        </td>
+                        <td className="border border-purple-200 px-4 py-2 text-purple-700">
+                          {reply.message_content}
+                        </td>
+                        <td className="border border-purple-200 px-4 py-2 text-purple-700">
+                          {reply.send_date
+                            ? new Date(reply.send_date).toLocaleDateString(
+                                "ja-JP",
+                                {
+                                  year: "numeric",
+                                  month: "2-digit",
+                                  day: "2-digit",
+                                }
+                              )
+                            : "N/A"}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
 
-              <ReplyForm
-                onSubmit={(reply) =>
-                  addReply(
-                    selectedMessage.message_id,
-                    selectedMessage.sender_user_name,
-                    reply
-                  )
-                }
-                selectedUserName={selectedMessage.sender_user_name}
-                userNames={users.map((user) => user.user_name)}
-              />
+              <div className="mt-4">
+                <h3 className="font-semibold mb-2">返信を送る</h3>
+                <ReplyForm
+                  onSubmit={(reply) =>
+                    addReply(
+                      selectedMessage.message_id,
+                      selectedMessage.sender_user_name,
+                      reply
+                    )
+                  }
+                  selectedUserName={selectedMessage.sender_user_name}
+                  userNames={users.map((user) => user.user_name)}
+                />
+              </div>
             </div>
           )}
         </div>

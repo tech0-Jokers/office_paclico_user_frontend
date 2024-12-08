@@ -41,6 +41,8 @@ export default function NewMessageForm({
   // 各フィールドの入力値を管理する状態変数
   const [to, setTo] = useState(""); // 送信先
   const [from, setFrom] = useState(""); // 送信元
+  const [to_name, setTo_name] = useState(""); // 送信先の名前
+  const [from_name, setFrom_name] = useState(""); // 送信元の名前
   const [message, setMessage] = useState(predefinedMessages[0]); // メッセージ内容
   const [treat, setTreat] = useState(""); // お菓子の種類
   const [users, setUsers] = useState<User[]>([]); // ユーザーリスト
@@ -144,6 +146,8 @@ export default function NewMessageForm({
   // フォームのリセット処理
   const resetForm = () => {
     setTo("");
+    setTo_name("");
+    setFrom_name("");
     setFrom("");
     setMessage(predefinedMessages[0]);
     setTreat("");
@@ -156,7 +160,7 @@ export default function NewMessageForm({
     e.preventDefault(); // デフォルトのフォーム送信を無効化
 
     // フォームデータをオブジェクトとして構築
-    const formData = { to, from, message, treat };
+    const formData = { to, to_name, from, from_name, message, treat };
 
     try {
       // APIエンドポイントのURL
@@ -234,14 +238,14 @@ export default function NewMessageForm({
 
       {/* メッセージを送る相手の選択 */}
       <div>
-        <Label htmlFor="userSelect">送る相手を選んでください</Label>
+        <Label htmlFor="userSelect">相手のグループを選んでください</Label>
         <Select
           value={selectedSendUser ? selectedSendUser.user_name : undefined}
           onValueChange={handleSendUserSelect}
           required
         >
           <SelectTrigger>
-            <SelectValue placeholder="ユーザーを選択" />
+            <SelectValue placeholder="グループを選択" />
           </SelectTrigger>
           <SelectContent>
             {users.map((user) => (
@@ -253,16 +257,30 @@ export default function NewMessageForm({
         </Select>
       </div>
 
+      {/* メッセージの送り先の名前を入力する */}
+      <div>
+        <Label htmlFor="to_Name">相手の名前を入力してください</Label>
+        <Textarea
+          id="to_Name"
+          value={to_name}
+          onChange={(e) => setTo_name(e.target.value)}
+          rows={1}
+          style={{ height: "auto", minHeight: "1em" }}
+        />
+      </div>
+
       {/* メッセージの送り主の選択 */}
       <div>
-        <Label htmlFor="userSelect">あなたの名前を選んでください</Label>
+        <Label htmlFor="userSelect">
+          あなたが所属するグループを選んでください
+        </Label>
         <Select
           value={selectedFromUser ? selectedFromUser.user_name : undefined}
           onValueChange={handleFromUserSelect}
           required
         >
           <SelectTrigger>
-            <SelectValue placeholder="ユーザーを選択" />
+            <SelectValue placeholder="グループを選択" />
           </SelectTrigger>
           <SelectContent>
             {users.map((user) => (
@@ -272,6 +290,18 @@ export default function NewMessageForm({
             ))}
           </SelectContent>
         </Select>
+      </div>
+
+      {/* メッセージの送り主の名前を入力する */}
+      <div>
+        <Label htmlFor="from">あなたの名前を入力してください</Label>
+        <Textarea
+          id="from_Name"
+          value={from_name}
+          onChange={(e) => setFrom_name(e.target.value)}
+          rows={1}
+          style={{ height: "auto", minHeight: "1em" }}
+        />
       </div>
 
       {/* メッセージ入力方法の選択 */}
