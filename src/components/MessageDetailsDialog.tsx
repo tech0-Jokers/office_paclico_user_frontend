@@ -117,10 +117,12 @@ export default function MessageDetailsDialog({
       // サーバーに送信するデータを構築
       const replyData = {
         message_id: messageId, // メッセージID
-        comment_user_id: matchedUser?.user_id || 0, // 一致するユーザーのID
-        comment_user_name: replyContent.from_name, // ユーザー名
-        comment_user_name_manual_input: replyContent.from_name_input, // 入力されたユーザー名
-        message_content: replyContent.content, // 返信内容
+        comment_user_id: matchedUser?.user_id || 0, // 一致するユーザーID
+        comment_user_name: matchedUser?.user_name || replyContent.from_name, // ユーザー名
+        comment_user_name_manual_input: replyContent.from_name_input, // 手動入力されたユーザー名
+        message_content: replyContent.content, // メッセージ内容
+        from_name: replyContent.from_name, // 追加: `from_name`
+        from_name_input: replyContent.from_name_input, // 追加: `from_name_input`
       };
 
       console.log("送信データ:", replyData); // デバッグ用に送信データを表示
