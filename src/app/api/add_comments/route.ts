@@ -6,17 +6,15 @@ export async function POST(request: Request) {
     // リクエストボディを取得しJSONとしてパース
     const body = await request.json();
 
-    const { to, to_name, from, from_name, message, treat } = body;
+    const { message_id, from, user_name, message } = body;
 
     // 必須フィールドのバリデーション
-    if (!to || !to_name || !from || !from_name || !message || !treat) {
+    if (!message_id || !from || !message || !user_name) {
       console.error("必須フィールドが不足しています。", {
-        to,
-        to_name,
+        message_id,
         from,
-        from_name,
+        user_name,
         message,
-        treat,
       });
       return NextResponse.json(
         { error: "すべての必須フィールドを入力してください。" },
@@ -24,11 +22,10 @@ export async function POST(request: Request) {
       );
     }
 
-    if (isNaN(to) || isNaN(from) || isNaN(treat)) {
+    if (isNaN(message_id) || isNaN(from)) {
       console.error("送信データの形式が正しくありません。", {
-        to,
+        message_id,
         from,
-        treat,
       });
       return NextResponse.json(
         { error: "送信データの形式が正しくありません。" },
@@ -38,12 +35,10 @@ export async function POST(request: Request) {
 
     // 外部API用のリクエストデータ
     const requestData = {
+      message_id: parseInt(message_id, 10),
+      comment_user_id: parseInt(from, 10),
+      comment_user_name_manual_input: user_name,
       message_content: message,
-      sender_user_id: parseInt(to, 10),
-      sender_user_name_manual_input: to_name,
-      receiver_user_id: parseInt(from, 10),
-      receiver_user_name_manual_input: from_name,
-      product_id: parseInt(treat, 10),
     };
 
     // 環境変数から外部APIのURLを取得
@@ -57,7 +52,7 @@ export async function POST(request: Request) {
     }
 
     // 外部APIにリクエストを送信
-    const response = await fetch(`${apiUrl}/add_message`, {
+    const response = await fetch(`${apiUrl}/add_comments`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

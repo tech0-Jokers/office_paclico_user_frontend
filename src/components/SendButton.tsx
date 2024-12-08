@@ -47,7 +47,6 @@ const SendButton: React.FC<SendButtonProps> = ({ onClick, organizationId }) => {
             onClose={handleClose}
             organizationId={organizationId}
           />
-          {/* 追加 */}
         </DialogContent>
       </Dialog>
     </div>

@@ -92,8 +92,8 @@ export default function MessageApp() {
           ? {
               ...msg,
               replies: [
-                ...msg.replies,
-                { ...reply, id: msg.replies.length + 1 }, // 新しい返信に一意のIDを付与
+                ...msg.reply_comments,
+                { ...reply, id: msg.reply_comments.length + 1 }, // 新しい返信に一意のIDを付与
               ],
             }
           : msg
@@ -107,9 +107,6 @@ export default function MessageApp() {
       <h1 className="text-3xl font-bold text-purple-800 mb-8">
         メッセージアプリ
       </h1>
-      <p className="text-lg text-purple-600">
-        Organization ID: {organizationId}
-      </p>
       {/* ローディング中の表示 */}
       {loading && <p>メッセージを取得中です...</p>}
 
