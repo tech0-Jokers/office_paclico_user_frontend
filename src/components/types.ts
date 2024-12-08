@@ -29,7 +29,7 @@ export interface ReplyComment {
 // 返信の型
 export type Reply = {
   id: number;
-  from: string;
+  from_name_input: string;
   content: string;
 };
 

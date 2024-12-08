@@ -67,14 +67,14 @@ export default function MessageDetailsDialog({
     }
   };
 
-  // 返信を追加する関数
+  // 返信をエンドポイントに送る関数
   const sendReplyToBackend = async (replyContent: {
     message_id: number;
     comment_user_id: number;
     message_content: string;
-    comment_user_name: string;
+    comment_user_name_manual_input: string;
   }) => {
-    const requestUrl = `/api/add_comments/`;
+    const requestUrl = `/api/add_comments`;
     try {
       const response = await fetch(requestUrl, {
         method: "POST",
@@ -108,7 +108,7 @@ export default function MessageDetailsDialog({
         message_id: messageId,
         comment_user_id:
           users.find((user) => user.user_name === userName)?.user_id || 0, // 選択されたユーザーのIDを取得
-        comment_user_name: userName, // ユーザー名
+        comment_user_name_manual_input: replyContent.from_name_input, // ユーザー名
         message_content: replyContent.content, // フォームからの返信内容
       };
 

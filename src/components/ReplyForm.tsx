@@ -17,15 +17,15 @@ export default function ReplyForm({
   userNames: string[]; // 追加: ユーザー名のリスト
 }) {
   // 各フィールドの入力値を管理するための状態変数
-  const [from, setFrom] = useState(selectedUserName); // 返信者の名前を管理
+  const [from_name, setFrom_name] = useState(selectedUserName); // 返信者の名前を管理
+  const [from_name_input, setFrom_name_input] = useState(""); // 返信者の名前を管理
   const [content, setContent] = useState(""); // 返信の内容を管理
 
   // フォーム送信時の処理
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault(); // デフォルトのフォーム送信を防ぐ
-    onSubmit({ from, content }); // 親コンポーネントに返信内容を送信
-    // フォームの内容をリセット
-    setFrom(selectedUserName); // 返信者の名前をリセット
+    onSubmit({ from_name_input, content }); // 親コンポーネントに返信内容を送信
+    setFrom_name(""); // 返信者の名前を空にする
     setContent(""); // 返信内容を空にする
   };
 
@@ -37,8 +37,8 @@ export default function ReplyForm({
         {/* ラベルを設定 */}
         <select
           id="replyFrom" // プルダウンのID
-          value={from} // 現在の返信者の名前
-          onChange={(e) => setFrom(e.target.value)} // 選択が変更されたときの処理
+          value={from_name} // 現在の返信者の名前
+          onChange={(e) => setFrom_name(e.target.value)} // 選択が変更されたときの処理
         >
           {userNames.map((name) => (
             <option key={name} value={name}>
@@ -46,6 +46,17 @@ export default function ReplyForm({
             </option>
           ))}
         </select>
+      </div>
+      {/* メッセージの送り主の名前を入力する */}
+      <div>
+        <Label htmlFor="from_name_input">あなたの名前を入力してください</Label>
+        <Textarea
+          id="from_name_input"
+          value={from_name_input}
+          onChange={(e) => setFrom_name_input(e.target.value)}
+          rows={1}
+          style={{ height: "auto", minHeight: "1em" }}
+        />
       </div>
       {/* 返信内容入力フィールド */}
       <div>
