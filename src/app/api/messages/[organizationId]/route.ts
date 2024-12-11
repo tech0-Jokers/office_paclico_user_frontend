@@ -38,7 +38,10 @@ export async function GET(
 
   try {
     // 外部APIに対してデータ取得のリクエストを送信します。
-    const response = await fetch(requestUrl);
+    const response = await fetch(requestUrl, {
+      method: "GET",
+      headers: { "Cache-Control": "no-cache" },
+    });
     const responseData = await response.text();
     console.log("Response textdata:", responseData); // デバッグ用にレスポンスデータをログ出力
 

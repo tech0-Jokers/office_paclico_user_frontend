@@ -35,7 +35,7 @@ export default function MessageCard({
             priority
           />
         </div>
-        <p className="text-purple-600">Name: {message.product_name}</p>
+        <p className="text-purple-600"> {message.product_name}</p>
 
         <div className="mt-2 flex items-center justify-between">
           <Button
