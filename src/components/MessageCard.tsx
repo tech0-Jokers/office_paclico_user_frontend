@@ -21,10 +21,20 @@ export default function MessageCard({
       onClick={() => onSelect(message)}
     >
       <CardContent className="p-4">
-        <p className="font-semibold text-purple-700">
-          To: {message.receiver_user_name}
-        </p>
-        <p className="text-purple-600">From: {message.sender_user_name}</p>
+        <table className="w-full text-left text-purple-700">
+          <tbody>
+            <tr>
+              <th className="font-semibold">To:</th>
+              <td>{message.receiver_user_name}</td>
+              <td>{message.receiver_user_name_manual_input}</td>
+            </tr>
+            <tr>
+              <th className="font-semibold">From:</th>
+              <td>{message.sender_user_name}</td>
+              <td>{message.sender_user_name_manual_input}</td>
+            </tr>
+          </tbody>
+        </table>
         <p className="text-purple-800 mt-2">{message.message_content}</p>
         <div className="aspect-video relative mb-2">
           <Image

@@ -37,6 +37,8 @@ const fetchMessagesData = async (
       receiver_user_id: msg.receiver_user_id, // 受信者のユーザーID
       sender_user_name: msg.sender_user_name, // 送信者の名前
       receiver_user_name: msg.receiver_user_name, // 受信者の名前
+      sender_user_name_manual_input: msg.sender_user_name_manual_input, // 送信者の名前（手動入力）
+      receiver_user_name_manual_input: msg.receiver_user_name_manual_input, // 受信者の名前（手動入力）
       product_id: msg.product_id, // 商品ID
       product_name: msg.product_name, // 商品名
       send_date: msg.send_date ? new Date(msg.send_date) : null, // 送信日時（nullの場合はnullをそのまま返す）
