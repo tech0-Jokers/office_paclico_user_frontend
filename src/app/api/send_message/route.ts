@@ -57,7 +57,7 @@ export async function POST(request: Request) {
     }
 
     // 外部APIにリクエストを送信
-    const response = await fetch(`${apiUrl}/add_message`, {
+    const response = await fetch(`${apiUrl}/add_message/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
