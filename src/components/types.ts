@@ -11,6 +11,8 @@ export interface Message {
   send_date: Date | null; // メッセージ送信日時（nullの場合もあり）
   sender_user_name: string; // 送信者の名前
   receiver_user_name: string; // 受信者の名前
+  sender_user_name_manual_input: string; // 送信者の名前（手動入力）
+  receiver_user_name_manual_input: string; // 受信者の名前（手動入力）
   product_image_url: string | null; // 商品画像URL（ない場合はnull）
   count_of_likes: number; // 「いいね」の数
   reply_comments: ReplyComment[]; // 返信コメントのリスト
