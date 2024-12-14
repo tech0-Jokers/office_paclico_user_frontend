@@ -64,8 +64,10 @@ export function InventryCard({
               className="w-16 mr-2"
             />
             <Button onClick={() => onAddToCart(quantity)}>カートに追加</Button>
-            <span className="ml-4 text-gray-600">在庫数: {stockQuantity}</span>
           </div>
+        </div>
+        <div className="flex items-center">
+          <span className="ml-4 text-gray-600">在庫数: {stockQuantity}</span>
         </div>
       </CardFooter>
     </Card>

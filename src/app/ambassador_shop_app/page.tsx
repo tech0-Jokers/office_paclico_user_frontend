@@ -134,7 +134,7 @@ const AmbassadorShop = () => {
   // UIの描画部分
   return (
     <div className="min-h-screen bg-purple-100 p-8">
-      <div className="container mx-auto">
+      <div className="container mx-auto mb-8">
         {/* ページタイトル */}
         <h1 className="text-3xl font-bold mb-6">Ambassador Shop</h1>
 
@@ -160,10 +160,21 @@ const AmbassadorShop = () => {
 
         {/* カート内容を表示 */}
         <div className="mt-8 p-4 bg-muted rounded-lg">
-          <h2 className="text-2xl font-bold mb-4 flex items-center">
-            <ShoppingCart className="mr-2" />
-            カート
-          </h2>
+          <div className="flex justify-between items-center mb-2">
+            <h2 className="text-2xl font-bold mb-4 flex items-center">
+              <ShoppingCart className="mr-2" />
+              カート
+            </h2>
+            <div className="flex justify-between items-center mb-2">
+              {/* カートに入っている商品を購入するボタンで、ボタンを押すとモーダルウィンドウが開く */}
+              <Button
+                variant="default"
+                onClick={() => purchase(organizationId)}
+              >
+                購入
+              </Button>
+            </div>
+          </div>
 
           {/* カートに入っている商品のリスト */}
           {cart.map((item) => {
@@ -189,10 +200,6 @@ const AmbassadorShop = () => {
             ) : null;
           })}
         </div>
-        {/* カートに入っている商品を購入するボタンで、ボタンを押すとモーダルウィンドウが開く */}
-        <Button variant="default" onClick={() => purchase(organizationId)}>
-          購入
-        </Button>
       </div>
     </div>
   );
