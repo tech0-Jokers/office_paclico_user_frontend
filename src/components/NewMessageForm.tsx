@@ -137,7 +137,7 @@ export default function NewMessageForm({
     setTo(selectedSendUser ? selectedSendUser.user_id.toString() : "");
   };
 
-  // メッセージを送るユーザーを選択したときの処理
+  // メッセージの送り主を選択したときの処理
   const handleFromUserSelect = (username: string) => {
     const selectedFromUser = users.find((user) => user.user_name === username);
     setFrom(selectedFromUser ? selectedFromUser.user_id.toString() : "");
