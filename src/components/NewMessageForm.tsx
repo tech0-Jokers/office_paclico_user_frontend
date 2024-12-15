@@ -96,7 +96,10 @@ export default function NewMessageForm({
     const requestUrl = `/api/products/${organizationId}`; // APIのエンドポイントを作成
 
     try {
-      const response = await fetch(requestUrl); // APIリクエストを送信
+      const response = await fetch(requestUrl, {
+        method: "GET",
+        headers: { "Cache-Control": "no-cache" },
+      });
 
       // レスポンスがエラーの場合は例外をスロー
       if (!response.ok) {
