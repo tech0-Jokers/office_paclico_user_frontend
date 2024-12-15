@@ -26,8 +26,7 @@ export async function GET(request, { params }) {
   try {
     // 外部APIに対してデータ取得のリクエストを送信します。
     const response = await fetch(requestUrl, {
-      method: "GET",
-      headers: { "Cache-Control": "no-cache" },
+      cache: "no-store", // キャッシュを無効化
     });
 
     // レスポンスが正常でない場合はエラーをスローします。
