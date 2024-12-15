@@ -39,10 +39,10 @@ export async function POST(request: Request) {
     // 外部API用のリクエストデータ
     const requestData = {
       message_content: message,
-      sender_user_id: parseInt(to, 10),
-      sender_user_name_manual_input: to_name,
-      receiver_user_id: parseInt(from, 10),
-      receiver_user_name_manual_input: from_name,
+      receiver_user_id: parseInt(to, 10),
+      receiver_user_name_manual_input: to_name,
+      sender_user_id: parseInt(from, 10),
+      sender_user_name_manual_input: from_name,
       product_id: parseInt(treat, 10),
     };
 
